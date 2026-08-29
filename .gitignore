@@ -1,0 +1,56 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+service-account*.json
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+dist/
+*.egg-info/
+
+# Node
+node_modules/
+.pnpm-store/
+coverage/
+*.tsbuildinfo
+
+# ML artifacts (never commit weights)
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.bin
+*.ckpt
+*.h5
+models/weights/
+artifacts/
+
+# Data
+data/private/
+*.parquet
+*.csv.gz
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Infra
+.terraform/
+*.tfstate
+*.tfstate.*
+tfplan
+
+nx-cache/
+.nx/
+

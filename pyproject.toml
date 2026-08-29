@@ -1,0 +1,9 @@
+[project]
+name = "adara-platform"
+version = "0.0.0"
+description = "Polyglot workspace root — Python packages live under packages/ and services/"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]

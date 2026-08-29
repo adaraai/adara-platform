@@ -1,0 +1,56 @@
+openapi: 3.1.0
+info:
+  title: ADARA API
+  version: 0.0.0
+  description: Development contract. Endpoints are stubs until intelligence services ship.
+servers:
+  - url: http://localhost:8080
+paths:
+  /v1/health:
+    get:
+      summary: Liveness
+      responses:
+        "200":
+          description: OK
+  /v1/language/detect:
+    post:
+      summary: Detect language (stub)
+      responses:
+        "501":
+          description: Not implemented
+  /v1/translate:
+    post:
+      summary: Translate (stub)
+      responses:
+        "501":
+          description: Not implemented
+  /v1/speech/transcribe:
+    post:
+      summary: Transcribe speech (stub)
+      responses:
+        "501":
+          description: Not implemented
+  /v1/context/query:
+    post:
+      summary: Retrieve African context (stub)
+      responses:
+        "501":
+          description: Not implemented
+  /v1/context/generate:
+    post:
+      summary: Generate with context (stub)
+      responses:
+        "501":
+          description: Not implemented
+  /v1/models:
+    get:
+      summary: List registered models
+      responses:
+        "200":
+          description: May be an empty list
+  /v1/languages:
+    get:
+      summary: Language capability catalog
+      responses:
+        "200":
+          description: Status is planned/experimental/research/beta/production per language

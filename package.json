@@ -1,0 +1,8 @@
+{
+  "name": "adara-platform",
+  "private": true,
+  "description": "ADARA application and service platform (polyglot monorepo)",
+  "scripts": {
+    "test": "npm test --prefix apps/api && python -m pytest -q packages/providers"
+  }
+}
