@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * ADARA design tokens.
+ *
+ * Every value is a raw `R G B` triplet so Tailwind can apply opacity
+ * modifiers (`bg-surface/60`). Components consume the semantic name only —
+ * a rebrand edits this file and nothing else.
+ *
+ * Ramps: violet is the product signature; sand is the African-warmth
+ * counterweight so the UI never reads as purely synthetic.
+ */
+@layer base {
+  :root {
+    /* Canvas — flat OpenAI-style white */
+    --bg: 255 255 255;
+    --surface: 255 255 255;
+    --surface-raised: 255 255 255;
+    --surface-sunken: 247 247 248;
+
+    /* Text */
+    --text: 13 13 13;
+    --text-secondary: 110 110 128;
+    --text-tertiary: 142 142 160;
+    --text-inverse: 255 255 255;
+
+    /* Brand — monochrome black / white */
+    --primary: 0 0 0;
+    --primary-pressed: 38 38 38;
+    --primary-soft: 245 245 245;
+    --on-primary: 255 255 255;
+
+    --accent: 251 194 235;
+    --accent-soft: 255 240 250;
+
+    /* Status */
+    --success: 92 191 74;
+    --warning: 201 122 51;
+    --danger: 244 87 123;
+
+    /* Lines */
+    --border: 229 229 229;
+    --border-strong: 212 212 212;
+
+    /* Glass fill + hairline; opacity is applied per use (bg-glass/50) */
+    --glass: 255 255 255;
+    --glass-border: 255 255 255;
+  }
+
+  .dark:root {
+    /* Canvas — near-black like ChatGPT mobile */
+    --bg: 0 0 0;
+    --surface: 38 38 38;
+    --surface-raised: 38 38 38;
+    --surface-sunken: 28 28 28;
+
+    --text: 236 236 236;
+    --text-secondary: 172 172 172;
+    --text-tertiary: 142 142 142;
+    --text-inverse: 0 0 0;
+
+    --primary: 255 255 255;
+    --primary-pressed: 230 230 230;
+    --primary-soft: 38 38 38;
+    --on-primary: 0 0 0;
+
+    --accent: 233 182 127;
+    --accent-soft: 126 71 28;
+
+    --success: 167 227 154;
+    --warning: 233 182 127;
+    --danger: 255 166 186;
+
+    --border: 52 52 52;
+    --border-strong: 64 64 64;
+
+    --glass: 255 255 255;
+    --glass-border: 255 255 255;
+  }
+}
+
+/**
+ * Web-only resets. These selectors never match on native, where NativeWind
+ * drops them, so they cost nothing in the app builds.
+ */
+@layer base {
+  /*
+   * `react-native-web` renders TextInput as <input>/<textarea>, which the
+   * browser paints with its own focus ring inside our rounded composer —
+   * the inner border. Our own `border-border` outline is the only one we want.
+   */
+  input,
+  textarea,
+  select,
+  [contenteditable] {
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  /*
+   * Full-height flex chain for react-native-web. Without this the WebFrame
+   * phone column collapses and absolute UI (tab bar, composer) misaligns.
+   */
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  html {
+    background-color: #f1f1f3;
+  }
+
+  html.dark {
+    background-color: #161616;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f1f1f3;
+  }
+
+  html.dark body {
+    background-color: #161616;
+  }
+
+  #root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+
+  /*
+   * System-theme fallback before NativeWind attaches the `dark` class.
+   * Mirrors the `.dark:root` block below.
+   */
+  @media (prefers-color-scheme: dark) {
+    :root:not(.light) {
+      --bg: 0 0 0;
+      --surface: 38 38 38;
+      --surface-raised: 38 38 38;
+      --surface-sunken: 28 28 28;
+      --text: 236 236 236;
+      --text-secondary: 172 172 172;
+      --text-tertiary: 142 142 142;
+      --text-inverse: 0 0 0;
+      --primary: 255 255 255;
+      --primary-pressed: 230 230 230;
+      --primary-soft: 38 38 38;
+      --on-primary: 0 0 0;
+      --accent: 233 182 127;
+      --accent-soft: 126 71 28;
+      --success: 167 227 154;
+      --warning: 233 182 127;
+      --danger: 255 166 186;
+      --border: 52 52 52;
+      --border-strong: 64 64 64;
+      --glass: 255 255 255;
+      --glass-border: 255 255 255;
+    }
+  }
+}

@@ -16,15 +16,17 @@ services:
       - "6379:6379"
 
   api:
-    build: ./apps/api
+    build: ./services/door
     ports:
       - "8080:8080"
     environment:
       PORT: "8080"
-      DATABASE_URL: postgres://adara:adara@postgres:5432/adara_dev
-    depends_on:
-      - postgres
-      - redis
+      ADARA_DOOR_DEV: "1"
+      ADARA_API_KEYS: "dev"
+      ADARA_SPEECH_MMS_MODEL: ${ADARA_SPEECH_MMS_MODEL:-facebook/mms-1b-all}
+      ADARA_SPEECH_MMS_DEVICE: ${ADARA_SPEECH_MMS_DEVICE:-cpu}
+    # Intelligence + optional MMS weights are expected on the image / volume in real deploys.
+    # Local `make api` is the supported Path for Day-1 development.
 
 volumes:
   adara_pg:

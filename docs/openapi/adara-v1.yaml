@@ -1,56 +1,829 @@
 openapi: 3.1.0
 info:
   title: ADARA API
-  version: 0.0.0
-  description: Development contract. Endpoints are stubs until intelligence services ship.
+  version: 0.1.0
+  summary: African speech, language and context intelligence over HTTP.
+  description: |
+    The developer-facing surface of the ADARA INTELLIGENCE tier.
+
+    **Status: Phase 1 Door.** `services/door` (port 8080) implements `POST /v1/understand`,
+    `POST /v1/speech/transcribe`, and `POST /v1/speech/synthesize` when the corresponding
+    intelligence backends are installed. Unwired speech backends still answer `501` with a clear
+    reason. The schemas below match what `adara-intelligence` produces
+    (`adara_intelligence.pipeline.understand_text`, ASR/TTS). `adara-sdk` is written against this
+    file.
+
+    ## Honesty rules that are part of the contract, not documentation
+
+    These fields exist because the alternative is a confidently wrong answer, and every client is
+    expected to surface them rather than drop them:
+
+    - `provisional` — the knowledge behind a result was assembled from secondary sources and has
+      not been reviewed by someone who speaks the language. It is `true` for every language ADARA
+      covers today.
+    - `status` / `stages` — `interface_only` means no backend was registered, not that nothing was
+      found. A `null` field is never ambiguous: `stages` says which step produced it.
+    - `confidence` never reaches `1.0`, and `reasons` states how it was reached.
+    - `language_support.status` keeps `claimed` (a vendor enumerates the language) strictly apart
+      from `verified` (ADARA measured it). Nothing is `verified` yet.
+
+    ## Authentication
+
+    `Authorization: Bearer <api key>`. Keys are secret: never ship one in a browser bundle or a
+    mobile binary. Server-side only.
+
+    ## Errors
+
+    Every non-2xx response is an `Error` object carrying a stable machine `code`, a human
+    `message`, and the `request_id` to quote in a support request. Codes are contract: they are
+    added to, never reworded.
+
+    ## Retries
+
+    `429` and `5xx` are retryable and carry `Retry-After` where a wait is known. `4xx` other than
+    `429` are not — retrying a rejected request only spends quota. Send an `Idempotency-Key` on
+    any `POST` you may retry.
+  version_note: |
+    Breaking changes ship as a new path prefix (`/v2`), never as a silent change to `/v1`.
+    Additive fields are not breaking; clients must ignore fields they do not recognise.
+  license:
+    name: Apache-2.0
+    identifier: Apache-2.0
+  contact:
+    name: ADARA
+    url: https://github.com/AI-Factory-AI
+
 servers:
   - url: http://localhost:8080
+    description: Local Door (`services/door`). Bearer API key required on authenticated routes.
+
+security:
+  - ApiKeyAuth: []
+
+tags:
+  - name: Meaning
+    description: The composed layer — speech, language and context over one utterance.
+  - name: Speech
+    description: Transcription and synthesis.
+  - name: Language
+    description: Written-language identification and entity extraction.
+  - name: Context
+    description: African cultural and local reference resolution.
+  - name: Catalog
+    description: What ADARA covers, and what is actually wired.
+
 paths:
   /v1/health:
     get:
+      tags: [Catalog]
       summary: Liveness
+      security: []
+      operationId: getHealth
       responses:
         "200":
-          description: OK
-  /v1/language/detect:
-    post:
-      summary: Detect language (stub)
-      responses:
-        "501":
-          description: Not implemented
-  /v1/translate:
-    post:
-      summary: Translate (stub)
-      responses:
-        "501":
-          description: Not implemented
-  /v1/speech/transcribe:
-    post:
-      summary: Transcribe speech (stub)
-      responses:
-        "501":
-          description: Not implemented
-  /v1/context/query:
-    post:
-      summary: Retrieve African context (stub)
-      responses:
-        "501":
-          description: Not implemented
-  /v1/context/generate:
-    post:
-      summary: Generate with context (stub)
-      responses:
-        "501":
-          description: Not implemented
-  /v1/models:
-    get:
-      summary: List registered models
-      responses:
-        "200":
-          description: May be an empty list
+          description: The service is up. Says nothing about whether any model is installed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, examples: [ok] }
+                  service: { type: string, examples: [adara-door] }
+                  mode:
+                    type: string
+                    enum: [development, production]
+                    description: |
+                      `development` is the local Door. Capabilities that are false still answer
+                      501 on their POST routes — surface that rather than hide it.
+                  capabilities:
+                    type: object
+                    description: What this deployment can actually do, probed at startup.
+                    additionalProperties: true
+
   /v1/languages:
     get:
+      tags: [Catalog]
       summary: Language capability catalog
+      description: |
+        What ADARA targets and what any installed backend claims — per capability, because a
+        language supported for transcription is not thereby supported for context resolution.
+      operationId: listLanguages
+      parameters:
+        - name: capability
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [transcribe, synthesize, detect_language, extract_entities, resolve_context]
       responses:
         "200":
-          description: Status is planned/experimental/research/beta/production per language
+          description: The catalog. May report every language as unsupported.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/LanguageCapability" }
+                  caveat:
+                    type: string
+                    description: |
+                      Ships in the response rather than the docs: language ID cannot name a
+                      language it was never trained on, so an unsupported speaker is reported as a
+                      confident wrong answer rather than as an error.
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /v1/models:
+    get:
+      tags: [Catalog]
+      summary: Registered backends
+      description: Which backends are actually wired, per capability. An empty list is a valid answer.
+      operationId: listModels
+      responses:
+        "200":
+          description: Registered backends, or an empty list.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Model" }
+                  note: { type: string }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /v1/understand:
+    post:
+      tags: [Meaning]
+      summary: Turn one utterance into meaning
+      description: |
+        The flagship call: speech, language and context composed into a single object, as
+        `adara_intelligence.pipeline` produces it. Send `text`, or send audio to
+        `/v1/speech/jobs` and pass the resulting `transcript` here.
+
+        Degrades rather than failing. With no backends registered the response is still a valid
+        `Meaning` with `status: interface_only`.
+      operationId: understand
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UnderstandRequest" }
+      responses:
+        "200":
+          description: The meaning object.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Meaning" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "501": { $ref: "#/components/responses/NotImplemented" }
+
+  /v1/speech/transcribe:
+    post:
+      tags: [Speech]
+      summary: Transcribe audio (synchronous)
+      description: |
+        For short audio only. Anything long enough to risk a proxy timeout belongs on
+        `/v1/speech/jobs`, which returns partial results if it fails part-way.
+      operationId: transcribe
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary }
+                language:
+                  type: string
+                  description: Skip detection when the language is already known.
+                diarize: { type: boolean, default: false }
+      responses:
+        "200":
+          description: Transcript plus what produced it.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Transcription" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "413": { $ref: "#/components/responses/PayloadTooLarge" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "501": { $ref: "#/components/responses/NotImplemented" }
+
+  /v1/speech/synthesize:
+    post:
+      tags: [Speech]
+      summary: Synthesize speech from text
+      description: |
+        Returns WAV audio as base64 in JSON so the same Accept: application/json clients that call
+        understand and transcribe can call synthesize without a second binary path. Language codes
+        follow the ADARA registry (`tw`, `ee`, `yo`, …); the Door maps them to the MMS voice that
+        actually ships.
+      operationId: synthesize
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SynthesizeRequest" }
+      responses:
+        "200":
+          description: Synthesized audio plus what produced it.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Synthesis" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "501": { $ref: "#/components/responses/NotImplemented" }
+
+  /v1/speech/jobs:
+    post:
+      tags: [Speech]
+      summary: Start an asynchronous transcription
+      description: |
+        Returns immediately with a job id. A job that fails at minute 58 keeps 57 minutes of
+        transcript — `partial_result` is populated on failure rather than discarded.
+      operationId: createSpeechJob
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary }
+                language: { type: string }
+                diarize: { type: boolean, default: false }
+      responses:
+        "202":
+          description: Accepted. Poll `GET /v1/speech/jobs/{job_id}`.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Job" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "501": { $ref: "#/components/responses/NotImplemented" }
+
+  /v1/speech/jobs/{job_id}:
+    get:
+      tags: [Speech]
+      summary: Job status and result
+      operationId: getSpeechJob
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The job. `status` is `queued`, `running`, `succeeded`, `failed` or `cancelled`.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Job" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /v1/language/detect:
+    post:
+      tags: [Language]
+      summary: Identify the language of written text
+      description: |
+        Abstains rather than guessing. A `null` language with `reason: ambiguous` and two
+        candidates is a real answer — Zulu and Xhosa cannot be separated from one sentence, and a
+        coin flip presented as a detection routes a speaker to a model that has never seen their
+        language.
+      operationId: detectLanguage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text: { type: string, maxLength: 100000 }
+      responses:
+        "200":
+          description: A detection, or a stated abstention.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/LanguageDetection" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "501": { $ref: "#/components/responses/NotImplemented" }
+
+  /v1/language/entities:
+    post:
+      tags: [Language]
+      summary: Extract named entities
+      operationId: extractEntities
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text: { type: string, maxLength: 100000 }
+                language: { type: string }
+      responses:
+        "200":
+          description: Entities with offsets into the submitted text.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EntityResult" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "501": { $ref: "#/components/responses/NotImplemented" }
+
+  /v1/context/resolve:
+    post:
+      tags: [Context]
+      summary: Resolve local and cultural references
+      description: |
+        Says what a reference points at in the world the speaker lives in — that *momo* is mobile
+        money, that *NEPA* is the power supply and not a currently-existing organisation.
+
+        Every reading carries the alternatives it beat and the reasons behind its confidence, and
+        `gaps` reports what nothing explained, which is the only way a caller can tell a missing
+        term from an utterance that simply had no local references.
+      operationId: resolveContext
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ContextRequest" }
+      responses:
+        "200":
+          description: The resolution.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ContextResolution" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "501": { $ref: "#/components/responses/NotImplemented" }
+
+  /v1/context/query:
+    post:
+      tags: [Context]
+      summary: Resolve local and cultural references (deprecated alias)
+      deprecated: true
+      description: Kept for the original stub contract. Use `/v1/context/resolve`.
+      operationId: queryContext
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ContextRequest" }
+      responses:
+        "200":
+          description: The resolution.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ContextResolution" }
+        "501": { $ref: "#/components/responses/NotImplemented" }
+
+  /v1/context/coverage:
+    get:
+      tags: [Context]
+      summary: What context knowledge exists, per language
+      description: |
+        The contribution backlog, worst-covered first. `no_pack` fails loudly; `pack_unreviewed`
+        fails quietly and confidently, which is the more dangerous state and the reason this
+        endpoint exists.
+      operationId: getContextCoverage
+      responses:
+        "200":
+          description: Per-language coverage.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/ContextCoverage" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /v1/translate:
+    post:
+      tags: [Language]
+      summary: Translate (not implemented)
+      description: Reserved. No translation capability ships in `adara-intelligence`.
+      operationId: translate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text, target]
+              properties:
+                text: { type: string }
+                source: { type: string }
+                target: { type: string }
+      responses:
+        "501": { $ref: "#/components/responses/NotImplemented" }
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
+      description: |
+        `Authorization: Bearer <api key>`. Server-side only — a key in a browser bundle is a
+        published key.
+
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema: { type: string, maxLength: 255 }
+      description: |
+        A client-generated unique string. Retrying with the same key returns the original result
+        instead of doing the work twice. SDKs generate one per request automatically.
+
+  responses:
+    BadRequest:
+      description: The request was rejected. Not retryable.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: Missing or invalid API key.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: No such resource.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    PayloadTooLarge:
+      description: The audio exceeded the accepted size or duration.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    RateLimited:
+      description: Too many requests. Retryable after `Retry-After`.
+      headers:
+        Retry-After:
+          schema: { type: integer }
+          description: Seconds to wait.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotImplemented:
+      description: |
+        The endpoint exists and is specified, but no backend is wired behind it in this
+        deployment. This is the current answer from every POST endpoint, and it is deliberately
+        distinct from a 5xx: nothing broke.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [type, code, message]
+          properties:
+            type:
+              type: string
+              enum:
+                [invalid_request_error, authentication_error, permission_error, not_found_error,
+                 rate_limit_error, not_implemented_error, api_error, connection_error]
+            code:
+              type: string
+              description: Stable machine code. Added to, never reworded.
+              examples: [not_implemented, unreadable_audio, text_too_long, backend_failed]
+            message: { type: string }
+            param: { type: string }
+            request_id: { type: string }
+            doc_url: { type: string, format: uri }
+
+    Status:
+      type: string
+      enum: [ok, interface_only, partial, error]
+      description: |
+        `ok` a registered backend ran; `interface_only` nothing was registered, so only the
+        offline layers ran; `partial` something failed, see `errors`; `error` the input was
+        rejected and nothing downstream ran.
+
+    UnderstandRequest:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string, maxLength: 100000 }
+        locale:
+          type: string
+          description: ISO 3166-1 alpha-2. Narrows readings to those that hold in that country.
+          examples: [GH, NG, KE]
+        language:
+          type: string
+          description: "Skip detection. Reported as `basis: caller`, never as a detection."
+
+    Meaning:
+      type: object
+      description: The composed meaning object. Additive fields may appear; ignore what you do not know.
+      properties:
+        source: { type: string, enum: [audio, text] }
+        transcript: { type: [string, "null"] }
+        language: { type: [string, "null"] }
+        language_evidence: { $ref: "#/components/schemas/LanguageEvidence" }
+        language_support: { type: [object, "null"] }
+        language_segments: { type: [object, "null"] }
+        code_switched: { type: [boolean, "null"] }
+        normalized: { type: [object, "null"] }
+        audio_quality: { type: [object, "null"] }
+        diarization: { type: [object, "null"] }
+        entities: { type: [array, "null"], items: { $ref: "#/components/schemas/Entity" } }
+        intent: { type: [object, "null"] }
+        tokens: { type: [object, "null"] }
+        context: { anyOf: [{ $ref: "#/components/schemas/ContextResolution" }, { type: "null" }] }
+        concepts:
+          type: array
+          items: { type: string }
+          description: Stable ids for what was referred to — what an application should switch on.
+        domains:
+          type: array
+          items:
+            type: object
+            properties:
+              domain: { type: string }
+              weight: { type: number }
+              terms: { type: array, items: { type: string } }
+        region: { $ref: "#/components/schemas/Region" }
+        provisional: { type: boolean }
+        backends: { type: object }
+        stages: { type: object, additionalProperties: { type: string } }
+        status: { $ref: "#/components/schemas/Status" }
+        errors:
+          type: object
+          additionalProperties: { type: string }
+          description: "Stage-namespaced stable codes, e.g. `speech.transcribe: backend_failed`."
+
+    LanguageEvidence:
+      type: object
+      description: How the language was decided, across two independent detectors.
+      properties:
+        basis:
+          type: string
+          enum: [caller, agreement, speech_over_text, speech_only, text_only, none]
+        agreement: { type: [boolean, "null"] }
+        candidates:
+          type: array
+          items:
+            type: object
+            properties:
+              language: { type: [string, "null"] }
+              source: { type: string, enum: [speech, text] }
+              method: { type: string }
+              confidence: { type: [number, "null"] }
+              reason: { type: string }
+        notes: { type: array, items: { type: string } }
+        region_check:
+          type: object
+          description: |
+            The detected language cross-checked against the country the local references point at.
+            `consistent: false` usually means audio was decoded into the wrong language while the
+            local terms survived.
+          properties:
+            country: { type: [string, "null"] }
+            basis: { type: string }
+            consistent: { type: [boolean, "null"] }
+            languages_in_country: { type: array, items: { type: string } }
+            note: { type: string }
+
+    Region:
+      type: object
+      properties:
+        country: { type: [string, "null"] }
+        basis:
+          type: string
+          enum: [locale, inferred_from_terms, ambiguous, insufficient_evidence, none]
+        confidence: { type: number }
+        evidence: { type: array, items: { type: string } }
+        candidates: { type: object, additionalProperties: { type: number } }
+
+    ContextRequest:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string, maxLength: 100000 }
+        locale: { type: string, examples: [GH, NG, KE] }
+        language: { type: string }
+
+    ContextResolution:
+      type: object
+      properties:
+        locale: { type: [string, "null"] }
+        language: { type: [string, "null"] }
+        matches: { type: array, items: { $ref: "#/components/schemas/ContextMatch" } }
+        gaps: { type: array, items: { $ref: "#/components/schemas/Gap" } }
+        concepts: { type: array, items: { type: string } }
+        domains: { type: array, items: { type: object } }
+        region: { $ref: "#/components/schemas/Region" }
+        provisional:
+          type: boolean
+          description: True while any contributing knowledge pack is unreviewed. True today.
+        sources: { type: array, items: { type: string } }
+        packs_consulted: { type: array, items: { type: string } }
+        note: { type: string }
+
+    Sense:
+      type: object
+      description: One reading of one matched span, with its provenance and its score's justification.
+      properties:
+        term: { type: string }
+        gloss: { type: string }
+        category:
+          type: string
+          enum: [institution, commerce, geography, culture, idiom, terminology]
+        concept: { type: string }
+        domains: { type: array, items: { type: string } }
+        expansion: { type: string }
+        countries: { type: array, items: { type: string } }
+        register: { type: string }
+        sensitivity:
+          type: string
+          description: Why this term needs care — contested, dated, derogatory in some mouths.
+        related: { type: array, items: { type: string } }
+        inverted_gloss: { type: string }
+        source: { type: string }
+        pack_language: { type: string }
+        reviewed: { type: boolean }
+        confidence:
+          type: number
+          description: Never reaches 1.0. See `reasons` for how it was arrived at.
+        reasons: { type: array, items: { type: string } }
+        match_type: { type: string, enum: [exact, folded, fuzzy] }
+        distance: { type: integer }
+
+    ContextMatch:
+      allOf:
+        - $ref: "#/components/schemas/Sense"
+        - type: object
+          properties:
+            surface_form: { type: string }
+            start: { type: integer }
+            end: { type: integer }
+            reading:
+              type: string
+              description: The gloss actually in force — differs from `gloss` when `inverted`.
+            inverted: { type: boolean }
+            inverted_by: { type: string }
+            ambiguous: { type: boolean }
+            alternatives: { type: array, items: { $ref: "#/components/schemas/Sense" } }
+
+    Gap:
+      type: object
+      description: Something said that no knowledge pack explains — one row of the contribution roadmap.
+      properties:
+        text: { type: string }
+        start: { type: integer }
+        end: { type: integer }
+        reason: { type: string, enum: [unknown_orthography, near_miss] }
+        nearest_term: { type: string }
+        language_hint: { type: string }
+
+    Entity:
+      type: object
+      properties:
+        text: { type: string }
+        label: { type: string, enum: [PER, ORG, LOC, DATE] }
+        start: { type: integer }
+        end: { type: integer }
+        score:
+          type: [number, "null"]
+          description: "Null where the backend reports none. Never 1.0."
+
+    EntityResult:
+      type: object
+      properties:
+        entities: { type: array, items: { $ref: "#/components/schemas/Entity" } }
+        language: { type: [string, "null"] }
+        backend: { type: [string, "null"] }
+        status: { $ref: "#/components/schemas/Status" }
+
+    LanguageDetection:
+      type: object
+      properties:
+        language: { type: [string, "null"] }
+        confidence: { type: [number, "null"] }
+        script: { type: string }
+        method: { type: string }
+        status: { type: string, examples: [heuristic] }
+        provisional: { type: boolean }
+        reason:
+          type: string
+          description: Why nothing was returned — `too_short`, `no_marker_evidence`, `ambiguous`.
+        candidates: { type: array, items: { type: object } }
+        caveat: { type: string }
+
+    Transcription:
+      type: object
+      properties:
+        transcript: { type: [string, "null"] }
+        language: { type: [string, "null"] }
+        language_support: { type: [object, "null"] }
+        code_switched: { type: [boolean, "null"] }
+        audio_quality: { type: object }
+        diarization: { type: [object, "null"] }
+        normalized: { type: [object, "null"] }
+        status: { $ref: "#/components/schemas/Status" }
+        errors: { type: object, additionalProperties: { type: string } }
+
+    SynthesizeRequest:
+      type: object
+      required: [text]
+      properties:
+        text:
+          type: string
+          description: Text to speak aloud.
+        language:
+          type: string
+          description: ADARA registry code (e.g. `tw`). Required for MMS voices.
+
+    Synthesis:
+      type: object
+      required: [audio_base64, content_type, status]
+      properties:
+        audio_base64:
+          type: string
+          description: WAV bytes, base64-encoded.
+        content_type:
+          type: string
+          examples: [audio/wav]
+        language: { type: [string, "null"] }
+        status: { $ref: "#/components/schemas/Status" }
+        errors: { type: object, additionalProperties: { type: string } }
+
+    Job:
+      type: object
+      properties:
+        id: { type: string }
+        status: { type: string, enum: [queued, running, succeeded, failed, cancelled] }
+        progress: { type: number, minimum: 0, maximum: 1 }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+        result: { anyOf: [{ $ref: "#/components/schemas/Transcription" }, { type: "null" }] }
+        partial_result:
+          anyOf: [{ $ref: "#/components/schemas/Transcription" }, { type: "null" }]
+          description: |
+            What was produced before a failure. A job that dies at minute 58 keeps 57 minutes of
+            transcript; discarding it would make the caller pay twice for the same audio.
+        error: { anyOf: [{ $ref: "#/components/schemas/Error" }, { type: "null" }] }
+
+    LanguageCapability:
+      type: object
+      properties:
+        code: { type: string }
+        name: { type: string }
+        endonym:
+          type: string
+          description: What speakers call the language themselves.
+        capability: { type: string }
+        status:
+          type: string
+          enum: [verified, claimed, not_claimed, unknown, planned]
+          description: |
+            `claimed` is a vendor's enumeration and evidence of nothing but their marketing.
+            `verified` means ADARA measured it, with provenance. Nothing is `verified` yet.
+
+    Model:
+      type: object
+      properties:
+        name: { type: string }
+        capabilities: { type: array, items: { type: string } }
+        languages: { type: [array, "null"], items: { type: string } }
+
+    ContextCoverage:
+      type: object
+      properties:
+        language: { type: [string, "null"] }
+        status: { type: string, enum: [no_pack, pack_unreviewed, pack_reviewed, verified] }
+        entries: { type: integer }
+        categories: { type: array, items: { type: string } }
+        domains: { type: array, items: { type: string } }
+        countries: { type: array, items: { type: string } }
+        reviewed: { type: boolean }
+        caveat: { type: string }

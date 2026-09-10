@@ -4,13 +4,14 @@ Central ADARA application and service platform (polyglot monorepo).
 
 ## Status
 
-**Alpha (local API stubs only)**
+**Alpha — Phase 1 Door live locally**
 
 Classification: `CORE` · Visibility: `private` · License: `Proprietary`
 
+
 ## Overview
 
-Apps (`web`, `api`, `developer-portal`, `admin`) and services (`gateway`, `inference`, `context`, `language`, `speech`, `evaluation`, `safety`) share packages. The HTTP contract is `docs/openapi/adara-v1.yaml`. Intelligence implementations live in sibling repos and will be wired through providers — they are not copied here.
+Apps (`web`, `mobile`, `api`, `developer-portal`, `admin`) and services (`gateway`, `inference`, `context`, `language`, `speech`, `evaluation`, `safety`) share packages. The HTTP contract is `docs/openapi/adara-v1.yaml`. Intelligence implementations live in sibling repos and will be wired through providers — they are not copied here.
 
 ## Why this exists
 
@@ -37,17 +38,27 @@ See [repository map](https://github.com/AI-Factory-AI/adara-platform/blob/main/d
 ## Installation
 
 ```bash
-make compose-up   # postgres + redis
-make api          # development HTTP stubs on :8080
+# Sibling: install the Brain (and optionally MMS) first
+#   cd ../adara-intelligence && pip install -e ".[mms]"
+
+make compose-up   # postgres + redis (optional for Door)
+make api          # Door on :8080 (ADARA_DOOR_DEV=1, key "dev")
 make test
 ```
 
-Requires Docker for databases. The API runs with Node 20 and does not need Postgres for `/v1/health`.
+`make api` runs `services/door` (Python FastAPI). Legacy Node stub: `make api-stub`.
 
 
 ## Usage
 
-`GET /v1/health` returns ok. `POST /v1/*` intelligence routes return **501** until services exist. That is intentional.
+Door (`services/door`) on `:8080`:
+
+- `GET /v1/health` — liveness + capabilities (no auth)
+- `POST /v1/understand` — Bearer key; works offline via intelligence packs
+- `POST /v1/speech/transcribe` — Bearer + multipart file; needs MMS
+- `POST /v1/speech/synthesize` — Bearer + JSON; needs MMS TTS
+
+Dev key: `Authorization: Bearer dev`. See `services/door/README.md`.
 
 ## Development
 
