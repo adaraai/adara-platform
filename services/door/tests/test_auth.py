@@ -19,3 +19,12 @@ def test_explicit_keys_win(monkeypatch):
     assert config.accepts('sk_a')
     assert config.accepts('sk_b')
     assert not config.accepts('dev')
+
+
+def test_unset_dev_flag_defaults_off(monkeypatch):
+    """A forgotten override must fail closed, not fall back to the well-known "dev" token."""
+    monkeypatch.delenv('ADARA_API_KEYS', raising=False)
+    monkeypatch.delenv('ADARA_DOOR_DEV', raising=False)
+    config = Config.from_env()
+    assert not config.door_dev
+    assert not config.accepts('dev')

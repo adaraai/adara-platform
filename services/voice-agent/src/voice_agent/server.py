@@ -371,6 +371,11 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     # -- plumbing -----------------------------------------------------------------------------
+    def _bearer_token(self) -> str | None:
+        auth = self.headers.get('authorization') or ''
+        prefix = 'bearer '
+        return auth[len(prefix):].strip() if auth.lower().startswith(prefix) else None
+
     def _dispatch(self, method: str):
         path = self.path.split('?', 1)[0].rstrip('/') or '/'
         handler, params = self.application.resolve(method, path)
@@ -379,6 +384,13 @@ class Handler(BaseHTTPRequestHandler):
             status = params.get('_status', 404)
             code = 'method_not_allowed' if status == 405 else 'not_found'
             self._send(error_response(status, code, f'{method} {path} is not a route here.'))
+            return
+
+        # Health stays open so a load balancer or the app's own status check needs no key.
+        # Every other route can trigger a paid call against Door, so once VOICE_AGENT_API_KEYS is
+        # set, all of them require it. Off (empty keys) is the current, unauthenticated default.
+        if path != '/v1/health' and not self.application.config.accepts(self._bearer_token()):
+            self._send(error_response(401, 'invalid_api_key', 'A valid bearer token is required.'))
             return
 
         try:

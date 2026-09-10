@@ -9,6 +9,12 @@ COPY src ./src
 
 RUN pip install --no-cache-dir -e .
 
-ENV PORT=8080 ADARA_DOOR_DEV=1
+# Dev mode is opt-in only: a real deploy must pass ADARA_API_KEYS explicitly, not inherit a
+# well-known bearer token from the image. Set ADARA_DOOR_DEV=1 yourself for local/demo use.
+ENV PORT=8080
+
+RUN useradd --system --create-home --uid 10001 door
+USER door
+
 EXPOSE 8080
 CMD ["python", "-m", "door"]

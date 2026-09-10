@@ -238,6 +238,35 @@ def test_ending_a_session_removes_it(service):
 
 
 # =================================================================================================
+# Optional bearer auth (VOICE_AGENT_API_KEYS) -- off by default, matching the mobile client today
+# =================================================================================================
+
+def test_no_keys_configured_means_no_auth_is_required(service):
+    """Today's default: the mobile app sends no Authorization header at all."""
+    _, url = service
+    assert _call(url, '/v1/agent/sessions', method='POST', body={})[0] == 201
+
+
+def test_configured_keys_are_required_on_every_route_but_health():
+    config = Config.from_env({
+        'ADARA_MODE': 'local', 'PORT': '0', 'VOICE_AGENT_HOST': '127.0.0.1',
+        'VOICE_AGENT_API_KEYS': 'sk_a, sk_b',
+    })
+    application = Application(config, gateway=FakeGateway(), store=SessionStore(ttl_seconds=60))
+    server, url = _running(application)
+    try:
+        assert _call(url, '/v1/health')[0] == 200, 'health must stay open with no key'
+        assert _call(url, '/v1/agent/sessions', method='POST', body={})[0] == 401
+        assert _call(url, '/v1/agent/sessions', method='POST', body={},
+                     headers={'authorization': 'Bearer wrong'})[0] == 401
+        assert _call(url, '/v1/agent/sessions', method='POST', body={},
+                     headers={'authorization': 'Bearer sk_b'})[0] == 201
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+# =================================================================================================
 # Protocol details a mobile client depends on
 # =================================================================================================
 

@@ -1,3 +1,7 @@
+// SUPERSEDED by services/door (Python FastAPI), which is the real Phase 1 implementation of
+// every route below. Kept only as `make api-stub`, a dependency-free fallback for a machine
+// without Python set up. Its /v1/languages list is a hardcoded snapshot and WILL drift from the
+// real registry in adara-intelligence -- do not treat it as a source of truth for anything.
 import http from "node:http";
 
 const PORT = Number(process.env.PORT || 8080);
