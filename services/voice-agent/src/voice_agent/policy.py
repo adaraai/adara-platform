@@ -1,14 +1,17 @@
-"""What the agent says back — grounded in what was understood, never generated.
+"""What the agent says back — grounded in what was understood, by default never generated.
 
-There is no language model anywhere in this stack. `adara-intelligence` resolves references,
-identifies languages and reports what it could not explain; it does not write prose. So a voice
-agent built on it has two honest options: refuse to reply, or reply using only what was actually
-resolved. This module does the second.
+`adara-intelligence` resolves references, identifies languages and reports what it could not
+explain; it does not write prose. So a voice agent built on it has two honest options: refuse to
+reply, or reply using only what was actually resolved. This module's default policy,
+`GroundedPolicy`, does the second.
 
-Everything below is a **template filled from the meaning object**, and `Reply.source` says so on
-every single response — `grounded_template`, never `model`. A product that later wires a real
-model swaps in its own `AgentPolicy` and the label changes with it. That field exists so a
-downstream consumer, a log, or a user-facing badge can always tell which of the two answered.
+Everything in `GroundedPolicy` is a **template filled from the meaning object**, and `Reply.source`
+says so on every single response — `grounded_template`, never a model name. `llm.py` is this
+module's stated escape hatch actually taken: `OpenAIChatPolicy` implements the same `AgentPolicy`
+protocol and is wired in instead whenever `OPENAI_API_KEY` is configured (see `server.py`'s
+`_build_policy`). The label changes with it — `openai:<model>` — so a downstream consumer, a log,
+or a user-facing badge can always tell which of the two actually answered, and weight its trust in
+the reply accordingly: only `grounded_template` can never assert something ADARA did not resolve.
 
 ## Why a template is not a toy here
 

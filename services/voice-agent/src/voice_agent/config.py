@@ -47,6 +47,13 @@ class Config:
     a paid call against the Door backend -- unauthenticated and open to the world, that is a
     cost-abuse vector, not just a privacy one."""
 
+    openai_api_key: str = ''
+    """Set (via OPENAI_API_KEY) to switch the agent's reply policy from GroundedPolicy to
+    OpenAIChatPolicy -- see llm.py. Empty (the default) keeps replies template-only, which is the
+    only mode that can never assert something ADARA did not actually resolve."""
+
+    openai_model: str = 'gpt-4o-mini'
+
     @classmethod
     def from_env(cls, env: dict | None = None) -> Config:
         source = env if env is not None else os.environ
@@ -72,6 +79,8 @@ class Config:
                                            str(DEFAULT_MAX_AUDIO_BYTES))),
             allowed_origins=tuple(o.strip() for o in origins.split(',') if o.strip()),
             api_keys=frozenset(k.strip() for k in raw_keys.split(',') if k.strip()),
+            openai_api_key=source.get('OPENAI_API_KEY', ''),
+            openai_model=source.get('OPENAI_MODEL', 'gpt-4o-mini'),
         )
         config.validate()
         return config
@@ -96,7 +105,8 @@ class Config:
             raise ValueError('VOICE_AGENT_MAX_AUDIO_BYTES must be positive')
 
     def __repr__(self) -> str:
-        # The key never prints. Same rule as the SDK's Config.
+        # Keys never print. Same rule as the SDK's Config.
         key = '***' if self.adara_api_key else '<unset>'
+        openai_key = '***' if self.openai_api_key else '<unset>'
         return (f'Config(mode={self.mode!r}, adara_base_url={self.adara_base_url!r}, '
-                f'adara_api_key={key}, port={self.port})')
+                f'adara_api_key={key}, openai_api_key={openai_key}, port={self.port})')

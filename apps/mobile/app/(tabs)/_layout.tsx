@@ -1,14 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { Platform, Pressable, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Text } from "@/components";
 import { VoiceWaveformIcon } from "@/components/icons/VoiceWaveformIcon";
 import { tapMedium } from "@/lib/haptics";
 import { webRootStyle } from "@/lib/webLayout";
-import { elevation, useTokens } from "@/theme";
+import { useTokens } from "@/theme";
 
 type TabIcon = keyof typeof Ionicons.glyphMap;
 
@@ -27,10 +27,8 @@ const tabs: Record<(typeof TAB_ORDER)[number], TabMeta> = {
   settings: { icon: "person-outline", activeIcon: "person", label: "Profile" },
 };
 
-const BAR_HEIGHT = 72;
-const FAB_SIZE = 56;
-const FAB_LIFT = 22;
-const TAB_ICON_SIZE = 26;
+const TAB_ICON_SIZE = 22;
+const SPEECH_SIZE = 56;
 
 function TabItem({
   meta,
@@ -38,12 +36,14 @@ function TabItem({
   onPress,
   activeColor,
   inactiveColor,
+  activeBg,
 }: {
   meta: TabMeta;
   focused: boolean;
   onPress: () => void;
   activeColor: string;
   inactiveColor: string;
+  activeBg: string;
 }) {
   const color = focused ? activeColor : inactiveColor;
 
@@ -53,17 +53,30 @@ function TabItem({
       accessibilityState={{ selected: focused }}
       accessibilityLabel={meta.label}
       onPress={onPress}
-      style={{ flex: 1, alignItems: "center", justifyContent: "center", height: "100%" }}
+      hitSlop={6}
+      style={{ flex: 1, alignItems: "center", gap: 4, paddingVertical: 2, minWidth: 0 }}
       className="active:opacity-70"
     >
-      <Ionicons name={focused ? meta.activeIcon : meta.icon} size={TAB_ICON_SIZE} color={color} />
-      <Text variant="micro" className="mt-0.5 font-sans-medium" style={{ color }}>
+      <View
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: focused ? activeBg : "transparent",
+        }}
+      >
+        <Ionicons name={focused ? meta.activeIcon : meta.icon} size={TAB_ICON_SIZE} color={color} />
+      </View>
+      <Text variant="micro" className="font-sans-medium" style={{ color }}>
         {meta.label}
       </Text>
     </Pressable>
   );
 }
 
+/** Flat, edge-to-edge bar with the Talk action inline — same layout as the reference app's tab bar. */
 function TabBar({ state, navigation }: BottomTabBarProps) {
   const tokens = useTokens();
   const insets = useSafeAreaInsets();
@@ -73,7 +86,8 @@ function TabBar({ state, navigation }: BottomTabBarProps) {
   const barBg = isDark ? "#141414" : "#FFFFFF";
   const barBorder = isDark ? "#2E2E2E" : "#EBEBEB";
   const activeColor = isDark ? "#FFFFFF" : "#000000";
-  const inactiveColor = isDark ? "#8E8E8E" : "#8E8E8E";
+  const inactiveColor = "#8E8E8E";
+  const activeBg = isDark ? "#262626" : "#F5F5F5";
   const fabBg = isDark ? "#FFFFFF" : "#000000";
   const fabIcon = isDark ? "#000000" : "#FFFFFF";
 
@@ -96,6 +110,7 @@ function TabBar({ state, navigation }: BottomTabBarProps) {
         focused={focused}
         activeColor={activeColor}
         inactiveColor={inactiveColor}
+        activeBg={activeBg}
         onPress={() => {
           tapMedium();
           if (!focused) navigation.navigate(route.name);
@@ -106,61 +121,49 @@ function TabBar({ state, navigation }: BottomTabBarProps) {
 
   return (
     <View
-      pointerEvents="box-none"
+      role="navigation"
+      accessibilityLabel="Main navigation"
       style={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        bottom: 0,
-        paddingBottom: Platform.OS === "web" ? 10 : Math.max(insets.bottom, 10),
-        paddingHorizontal: 20,
-        alignItems: "center",
+        flexDirection: "row",
+        alignItems: "flex-start",
+        justifyContent: "space-around",
+        paddingHorizontal: 4,
+        paddingTop: 10,
+        paddingBottom: Math.max(insets.bottom, 12),
+        backgroundColor: barBg,
+        borderTopWidth: 1,
+        borderTopColor: barBorder,
       }}
     >
-      <View
-        style={[
-          {
-            width: "100%",
-            maxWidth: 480,
-            height: BAR_HEIGHT,
-            borderRadius: BAR_HEIGHT / 2,
-            backgroundColor: barBg,
-            borderWidth: 1,
-            borderColor: barBorder,
-            flexDirection: "row",
-            alignItems: "center",
-            paddingHorizontal: 6,
-          },
-          elevation("md", tokens.shadowColor),
-        ]}
-      >
-        {TAB_ORDER.slice(0, 2).map(renderTab)}
-        <View style={{ width: FAB_SIZE + 8 }} />
-        {TAB_ORDER.slice(2).map(renderTab)}
-      </View>
+      {TAB_ORDER.slice(0, 2).map(renderTab)}
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Voice"
+        accessibilityLabel="Talk"
         onPress={openVoice}
-        style={[
-          {
-            position: "absolute",
-            top: -FAB_LIFT,
-            alignSelf: "center",
-            width: FAB_SIZE,
-            height: FAB_SIZE,
-            borderRadius: FAB_SIZE / 2,
+        hitSlop={6}
+        style={{ flex: 1, alignItems: "center", gap: 4, paddingVertical: 2, minWidth: 0 }}
+        className="active:opacity-90"
+      >
+        <View
+          style={{
+            width: SPEECH_SIZE,
+            height: SPEECH_SIZE,
+            borderRadius: SPEECH_SIZE / 2,
+            marginTop: -14,
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: fabBg,
-          },
-          elevation("float", tokens.shadowColor),
-        ]}
-        className="active:opacity-90"
-      >
-        <VoiceWaveformIcon size={26} color={fabIcon} />
+          }}
+        >
+          <VoiceWaveformIcon size={24} color={fabIcon} />
+        </View>
+        <Text variant="micro" className="font-sans-semibold" style={{ color: inactiveColor }}>
+          Talk
+        </Text>
       </Pressable>
+
+      {TAB_ORDER.slice(2).map(renderTab)}
     </View>
   );
 }

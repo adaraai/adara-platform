@@ -9,6 +9,7 @@ export { Chip } from "./Chip";
 export { IconButton } from "./IconButton";
 export { Orb } from "./Orb";
 export { Gradient } from "./primitives";
+export { PromoBannerCarousel, type PromoBanner, type PromoIllustration } from "./PromoBanner";
 export { Screen } from "./Screen";
 export { Text, type TextVariant } from "./Text";
 export { Waveform } from "./Waveform";

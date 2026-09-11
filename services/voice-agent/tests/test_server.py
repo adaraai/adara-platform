@@ -133,12 +133,14 @@ def test_synthesize_is_a_route_even_when_tts_is_unavailable(service):
     assert body['error']['code'] == 'not_implemented'
 
 
-def test_generate_refuses_because_there_is_no_language_model(service):
+def test_generate_route_is_not_implemented(service):
+    """This standalone route stays a stub; reply generation now happens per-turn instead
+    (see test_llm_policy.py for OpenAIChatPolicy, which POST /v1/agent/.../turns can use)."""
     _, url = service
     status, body, _ = _call(url, '/v1/context/generate', method='POST', body={'prompt': 'hi'})
 
     assert status == 501
-    assert 'no language model' in body['error']['message']
+    assert 'not implemented' in body['error']['message']
 
 
 # =================================================================================================

@@ -34,6 +34,7 @@ from adara import AdaraError, NotImplementedYet
 from .adara import AdaraGateway
 from .agent import VoiceAgent
 from .config import Config
+from .llm import OpenAIChatPolicy
 from .sessions import SessionStore
 
 logger = logging.getLogger(__name__)
@@ -58,6 +59,23 @@ STATUS_MAP = {
 }
 
 
+def _build_policy(config: Config, gateway: AdaraGateway):
+    """`None` defers to VoiceAgent's own default (GroundedPolicy) -- see agent.py.
+
+    OpenAIChatPolicy only when a key is configured, so a deployment with no OPENAI_API_KEY behaves
+    exactly as it always has: template-only, never generated.
+    """
+    if not config.openai_api_key:
+        return None
+    capabilities = gateway.capabilities()
+    return OpenAIChatPolicy(
+        api_key=config.openai_api_key,
+        model=config.openai_model,
+        speech_available=capabilities.synthesize,
+        speech_reason=capabilities.reasons.get('synthesize', 'no synthesis backend is wired'),
+    )
+
+
 class Application:
     """Routing and handlers, independent of the server that drives them."""
 
@@ -71,6 +89,7 @@ class Application:
         )
         self.agent = agent or VoiceAgent(
             self.adara, self.store, max_audio_bytes=config.max_audio_bytes,
+            policy=_build_policy(config, self.adara),
         )
         self.started_at = time.time()
 
@@ -205,9 +224,9 @@ class Application:
     def generate(self, request) -> Response:
         return error_response(
             501, 'not_implemented',
-            'There is no language model in this stack. The agent replies from what was actually '
-            'resolved — see POST /v1/agent/sessions/{id}/turns, whose reply carries '
-            'source="grounded_template". Nothing here generates prose.',
+            'This standalone route is not implemented. Reply generation happens per-turn at '
+            'POST /v1/agent/sessions/{id}/turns instead -- the reply carries source='
+            '"grounded_template", or "openai:<model>" when OPENAI_API_KEY is configured.',
         )
 
     # -- the voice conversation -------------------------------------------------------------------
@@ -495,14 +514,19 @@ def serve(application: Application | None = None) -> ThreadingHTTPServer:
 
 
 def main() -> None:
+    from .envfile import load_env_file
+
     logging.basicConfig(level=logging.INFO, format='%(levelname)s %(name)s: %(message)s')
+    load_env_file()  # optional; a real environment variable always wins, see envfile.py
     application = build()
     server = serve(application)
     host, port = server.server_address[:2]
 
     capabilities = application.adara.capabilities()
-    logger.info('%s listening on http://%s:%s (adara mode=%s)',
-                SERVICE, host, port, application.config.mode)
+    policy_name = 'openai:' + application.config.openai_model if application.config.openai_api_key \
+        else 'grounded_template'
+    logger.info('%s listening on http://%s:%s (adara mode=%s, reply policy=%s)',
+                SERVICE, host, port, application.config.mode, policy_name)
     logger.info('capabilities: %s', {k: v for k, v in capabilities.as_dict().items()
                                      if k != 'reasons'})
     try:

@@ -12,8 +12,11 @@ import {
   IconButton,
   IonFeatureIcon,
   LanguagePair,
+  Orb,
+  PromoBannerCarousel,
   Screen,
   Text,
+  type PromoBanner,
 } from "@/components";
 import { VoiceWaveformIcon } from "@/components/icons/VoiceWaveformIcon";
 import { capabilities, primaryFeature } from "@/lib/capabilities";
@@ -21,6 +24,9 @@ import { prompts, topics } from "@/lib/content";
 import { currentUser } from "@/lib/profile";
 import { tapLight } from "@/lib/haptics";
 import { useTokens } from "@/theme";
+
+/** Most recent threads — quick re-entry row under the hero, aya-style. */
+const RECENT = prompts.slice(0, 6);
 
 export default function HomeScreen() {
   const tokens = useTokens();
@@ -31,6 +37,34 @@ export default function HomeScreen() {
   const visible = useMemo(
     () => prompts.filter((prompt) => prompt.topicId === topicId).slice(0, 2),
     [topicId],
+  );
+
+  const banners: PromoBanner[] = useMemo(
+    () => [
+      {
+        illustration: "voice",
+        title: "Speak — we'll translate instantly",
+        accessibilityLabel: "Speak, we will translate instantly",
+        onPress: () => router.push("/voice"),
+      },
+      {
+        illustration: "history",
+        title: "Every session saved to History",
+        accessibilityLabel: "Open your translation history",
+        onPress: () => router.push("/history"),
+      },
+      {
+        illustration: "shield",
+        title: "Your words stay yours",
+        accessibilityLabel: "Your words stay yours — private by default",
+      },
+      {
+        illustration: "globe",
+        title: "Health, legal & government — covered",
+        accessibilityLabel: "Health, legal and government translations are covered",
+      },
+    ],
+    [router],
   );
 
   return (
@@ -68,67 +102,98 @@ export default function HomeScreen() {
           />
         </View>
 
-        <View className="flex-row gap-3">
-          <Card tone="sunken" className="min-h-[228px] flex-1 justify-between p-4">
-            <View>
-              {primaryFeature.waveform ? (
-                <FeatureIcon size="lg">
-                  <VoiceWaveformIcon size={23} color={tokens.text} />
-                </FeatureIcon>
-              ) : (
-                <IonFeatureIcon
-                  name={primaryFeature.icon}
-                  size="lg"
-                  color={tokens.text}
-                  glyph={23}
-                />
-              )}
-              <Text variant="heading" className="mt-4">
-                {primaryFeature.title}
-              </Text>
-              <Text variant="caption" className="mt-1.5 leading-snug text-text-secondary">
-                {primaryFeature.subtitle}
-              </Text>
-            </View>
-            <Button
-              label={primaryFeature.cta}
-              size="md"
-              className="mt-5"
-              fullWidth
-              onPress={() => router.push(primaryFeature.href as never)}
-            />
-          </Card>
+        <View className="items-center py-2">
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={primaryFeature.cta}
+            onPress={() => router.push(primaryFeature.href as never)}
+            className="active:opacity-85"
+          >
+            <Orb size={168} />
+          </Pressable>
+          <Button
+            label={primaryFeature.cta}
+            size="lg"
+            className="mt-1 px-10"
+            onPress={() => router.push(primaryFeature.href as never)}
+          />
+        </View>
 
-          <View className="min-h-[228px] flex-1 gap-3">
-            {capabilities.map((capability) => (
-              <Link key={capability.id} href={capability.href as never} asChild>
-                <Pressable className="flex-1 active:opacity-80">
-                  <Card tone="sunken" className="h-full justify-between p-3.5">
-                    {capability.waveform ? (
-                      <FeatureIcon>
-                        <VoiceWaveformIcon size={18} color={tokens.text} />
-                      </FeatureIcon>
-                    ) : (
-                      <IonFeatureIcon name={capability.icon} color={tokens.text} />
-                    )}
-                    <View className="mt-3 flex-row items-end justify-between gap-2">
-                      <View className="min-w-0 flex-1">
-                        <Text variant="bodyStrong">{capability.title}</Text>
-                        <Text
-                          variant="caption"
-                          className="mt-0.5 text-text-secondary"
-                          numberOfLines={1}
-                        >
-                          {capability.subtitle}
-                        </Text>
-                      </View>
-                      <Ionicons name="arrow-forward" size={16} color={tokens.textTertiary} />
-                    </View>
-                  </Card>
+        <View className="mt-6 flex-row gap-3">
+          {capabilities.map((capability) => (
+            <Link key={capability.id} href={capability.href as never} asChild>
+              <Pressable className="flex-1 flex-row items-center gap-3 rounded-full border border-border bg-surface-sunken px-4 py-3 active:opacity-80">
+                {capability.waveform ? (
+                  <FeatureIcon>
+                    <VoiceWaveformIcon size={16} color={tokens.text} />
+                  </FeatureIcon>
+                ) : (
+                  <IonFeatureIcon name={capability.icon} color={tokens.text} glyph={18} />
+                )}
+                <View className="min-w-0 flex-1">
+                  <Text variant="bodyStrong" numberOfLines={1}>
+                    {capability.title}
+                  </Text>
+                  <Text
+                    variant="caption"
+                    className="text-text-secondary"
+                    numberOfLines={1}
+                  >
+                    {capability.subtitle}
+                  </Text>
+                </View>
+              </Pressable>
+            </Link>
+          ))}
+        </View>
+
+        <Text variant="heading" className="mt-section">
+          Continue translating
+        </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          className="-mx-gutter mt-3"
+          contentContainerClassName="gap-4 px-gutter"
+          role="list"
+          accessibilityLabel="Recent translations"
+        >
+          {RECENT.map((prompt) => {
+            const topic = topics.find((t) => t.id === prompt.topicId);
+
+            return (
+              <View key={prompt.id} role="listitem" style={{ width: 72 }}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={prompt.title}
+                  onPress={() => {
+                    tapLight();
+                    router.push(`/chat/${prompt.id}`);
+                  }}
+                  className="items-center active:opacity-75"
+                >
+                  <FeatureIcon size="lg">
+                    <Ionicons
+                      name={topic?.icon ?? "chatbubble-ellipses-outline"}
+                      size={22}
+                      color={tokens.text}
+                    />
+                  </FeatureIcon>
+                  <Text
+                    variant="caption"
+                    numberOfLines={1}
+                    className="mt-2 text-center"
+                  >
+                    {prompt.title}
+                  </Text>
                 </Pressable>
-              </Link>
-            ))}
-          </View>
+              </View>
+            );
+          })}
+        </ScrollView>
+
+        <View className="mt-section">
+          <PromoBannerCarousel banners={banners} />
         </View>
 
         <View className="mt-section flex-row items-center justify-between">
