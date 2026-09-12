@@ -247,6 +247,46 @@ paths:
         "429": { $ref: "#/components/responses/RateLimited" }
         "501": { $ref: "#/components/responses/NotImplemented" }
 
+  /v1/speech/synthesize/stream:
+    post:
+      tags: [Speech]
+      summary: Synthesize speech, streamed
+      description: |
+        The same synthesis as `/v1/speech/synthesize`, streamed as `audio/wav` instead of returned
+        as one base64 blob: playback can begin before synthesis finishes, and the bytes arrive as
+        bytes rather than paying base64's extra third.
+
+        `X-Adara-Stream-Source` states which kind of streaming actually served the request —
+        `backend` when the speech host produced the audio incrementally, `buffered` when it was
+        synthesized in full and chunked on the way out. Both stream on the wire; only `backend`
+        improves time-to-first-byte. A client promising real-time to its own users must read this
+        header rather than assume, because the two are a different product promise.
+
+        Errors cannot be signalled once the body has begun, so everything that can fail —
+        authentication, capability checks, reaching the host — is resolved before the first chunk.
+      operationId: synthesizeStream
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SynthesizeRequest" }
+      responses:
+        "200":
+          description: A stream of WAV audio.
+          headers:
+            X-Adara-Stream-Source:
+              description: |
+                `backend` if the speech host streamed the audio; `buffered` if it was synthesized
+                in full here and chunked on the way out.
+              schema: { type: string, enum: [backend, buffered] }
+          content:
+            audio/wav:
+              schema: { type: string, format: binary }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+        "501": { $ref: "#/components/responses/NotImplemented" }
+
   /v1/speech/jobs:
     post:
       tags: [Speech]
