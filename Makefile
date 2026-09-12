@@ -4,8 +4,10 @@ dev: compose-up
 	$(MAKE) api
 
 # Public Door (Phase 1): Hear / Understand / Speak on :8080
+# Door lives in the adara-intelligence repo (api/), checked out as a sibling of this repo.
 api:
-	pip install -e ./services/door
+	pip install -e ../adara-intelligence
+	pip install -e ../adara-intelligence/api
 	python -m door
 
 # Legacy Node stub (GET-only / POST 501) — kept for comparison
@@ -16,11 +18,11 @@ api-stub:
 test:
 	npm test --prefix apps/api
 	python -m pytest -q packages/providers
-	python -m pytest -q services/door/tests
+	python -m pytest -q ../adara-intelligence/api/tests
 	python -m pytest -q services/voice-agent/tests
 
 door-test:
-	python -m pytest -q services/door/tests
+	python -m pytest -q ../adara-intelligence/api/tests
 
 voice-agent-test:
 	python -m pytest -q services/voice-agent/tests

@@ -16,17 +16,25 @@ services:
       - "6379:6379"
 
   api:
-    build: ./services/door
+    # Door lives in the adara-intelligence repo (api/), checked out as a sibling of this repo:
+    #   adara-org/adara-platform, adara-org/adara-intelligence
+    # Build context is adara-org (the parent of both) so the Dockerfile can COPY from
+    # adara-intelligence (the code) *and* adara-platform (the one canonical OpenAPI spec, this
+    # repo's docs/openapi/adara-v1.yaml) in one image. See adara-intelligence/api/Dockerfile.
+    build:
+      context: ..
+      dockerfile: adara-intelligence/api/Dockerfile
     ports:
       - "8080:8080"
     environment:
       PORT: "8080"
       ADARA_DOOR_DEV: "1"
       ADARA_API_KEYS: "dev"
-      ADARA_SPEECH_MMS_MODEL: ${ADARA_SPEECH_MMS_MODEL:-facebook/mms-1b-all}
-      ADARA_SPEECH_MMS_DEVICE: ${ADARA_SPEECH_MMS_DEVICE:-cpu}
-    # Intelligence + optional MMS weights are expected on the image / volume in real deploys.
-    # Local `make api` is the supported Path for Day-1 development.
+      # ASR/TTS both run on a remote host, not in this container — point these at whatever is
+      # actually serving them (a Kaggle-notebook tunnel, a Cloud Run endpoint, ...).
+      ADARA_ASR_ENDPOINT_URL: ${ADARA_ASR_ENDPOINT_URL:-}
+      ADARA_TTS_ENDPOINT_URL: ${ADARA_TTS_ENDPOINT_URL:-}
+    # Local `make api` is the supported path for Day-1 development.
 
 volumes:
   adara_pg:

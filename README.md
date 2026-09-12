@@ -38,27 +38,27 @@ See [repository map](https://github.com/AI-Factory-AI/adara-platform/blob/main/d
 ## Installation
 
 ```bash
-# Sibling: install the Brain (and optionally MMS) first
-#   cd ../adara-intelligence && pip install -e ".[mms]"
+# Sibling repo: the Brain, and Door itself, both live in adara-intelligence
+#   cd ../adara-intelligence && pip install -e ".[mms]" && pip install -e api
 
 make compose-up   # postgres + redis (optional for Door)
 make api          # Door on :8080 (ADARA_DOOR_DEV=1, key "dev")
 make test
 ```
 
-`make api` runs `services/door` (Python FastAPI). Legacy Node stub: `make api-stub`.
+`make api` runs Door (Python FastAPI, from `../adara-intelligence/api`). Legacy Node stub: `make api-stub`.
 
 
 ## Usage
 
-Door (`services/door`) on `:8080`:
+Door (`../adara-intelligence/api`) on `:8080`:
 
 - `GET /v1/health` — liveness + capabilities (no auth)
 - `POST /v1/understand` — Bearer key; works offline via intelligence packs
 - `POST /v1/speech/transcribe` — Bearer + multipart file; needs MMS
 - `POST /v1/speech/synthesize` — Bearer + JSON; needs MMS TTS
 
-Dev key: `Authorization: Bearer dev`. See `services/door/README.md`.
+Dev key: `Authorization: Bearer dev`. See `adara-intelligence/api/README.md`.
 
 ## Development
 

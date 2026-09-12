@@ -35,3 +35,5 @@ select = ["E", "F", "I", "UP", "B", "BLE", "C4", "SIM"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# no:cacheprovider: skip writing .pytest_cache/ entirely — nothing here uses --lf/--ff.
+addopts = "-p no:cacheprovider"

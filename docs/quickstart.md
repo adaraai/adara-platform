@@ -9,7 +9,7 @@ Get your first API call working in five minutes.
 Generate one with the key script:
 
 ```bash
-cd adara-platform/services/door
+cd adara-intelligence/api
 python scripts/generate_key.py
 ```
 
@@ -40,7 +40,7 @@ cd adara-org
 .\.venv\Scripts\Activate.ps1        # Windows
 # source .venv/bin/activate         # macOS / Linux
 
-cd adara-platform/services/door/src
+cd adara-intelligence/api/src
 $env:ADARA_DOOR_DEV = '1'           # Windows PowerShell
 $env:PORT = '8080'
 python -m door
@@ -76,7 +76,7 @@ curl -s http://localhost:8080/v1/health | python -m json.tool
 ```
 
 If `transcribe` or `synthesize` are `false`, MMS weights are not installed yet — see
-[MMS setup](../services/door/README.md). `understand` works offline without them.
+[MMS setup](../../adara-intelligence/api/README.md). `understand` works offline without them.
 
 ---
 
@@ -188,6 +188,6 @@ a developer exactly what happened instead of silently returning a lower-quality 
 
 ## Next steps
 
-- **MMS speech** — install weights for Hear / Speak: see the [Door README](../services/door/README.md)
+- **MMS speech** — install weights for Hear / Speak: see the [Door README](../../adara-intelligence/api/README.md)
 - **Full API reference** — open `/v1/docs` or read [`docs/openapi/adara-v1.yaml`](openapi/adara-v1.yaml)
 - **Mobile app** — point the voice-agent at this Door with `ADARA_MODE=api`
