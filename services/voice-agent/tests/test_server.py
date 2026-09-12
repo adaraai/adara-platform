@@ -346,7 +346,9 @@ def live():
     """The service over the actual intelligence layer — no fakes anywhere in the chain."""
     pytest.importorskip('adara_intelligence',
                         reason='install adara-intelligence to run the end-to-end tests')
-    application = Application(Config.from_env({'ADARA_MODE': 'local', 'PORT': '0', 'VOICE_AGENT_HOST': '127.0.0.1'}))
+    application = Application(Config.from_env({
+        'ADARA_MODE': 'local', 'PORT': '0', 'VOICE_AGENT_HOST': '127.0.0.1',
+    }))
     server, url = _running(application)
     try:
         yield url

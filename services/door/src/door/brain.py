@@ -166,7 +166,9 @@ class Brain:
                 locale=locale,
                 language=resolution.get('language'),
             )
-            context_result = context_obj.as_dict() if hasattr(context_obj, 'as_dict') else dict(context_obj)
+            context_result = (
+                context_obj.as_dict() if hasattr(context_obj, 'as_dict') else dict(context_obj)
+            )
         except Exception as error:  # noqa: BLE001 - degrade like the full pipeline
             errors['context.resolve_context'] = str(error)
             logger.warning('context resolve failed: %s', error)

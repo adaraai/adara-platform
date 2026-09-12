@@ -40,7 +40,7 @@ export default function SttUploadAsync() {
         </Code>
         <Code lang="bash">
 {`curl -s https://api.adara.ai/v1/speech/jobs/job_01j9... \\
-  -H "Authorization: Bearer $ADARA_API_KEY"`
+  -H "Authorization: Bearer $ADARA_API_KEY"`}
         </Code>
         <Table
           headers={["status", "Meaning"]}

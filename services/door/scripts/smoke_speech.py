@@ -51,7 +51,7 @@ def main() -> None:
     caps = health.get('capabilities', health)
     print('health ok', json.dumps(caps, indent=2))
     if not caps.get('transcribe') or not caps.get('synthesize'):
-        print('speech capabilities false — run adara-intelligence/scripts/speech/download_mms.py first')
+        print('speech capabilities false — run adara-intelligence/scripts/download_mms.py first')
         sys.exit(1)
 
     print('synthesize (first call may load MMS)...')

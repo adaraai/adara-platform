@@ -27,3 +27,35 @@ jobs:
           python-version: "3.12"
       - run: pip install pytest
       - run: pytest -q packages/providers
+  door:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: adaraai/adara-intelligence
+          path: adara-intelligence
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e adara-intelligence -e "./services/door[dev]"
+      - run: pytest -q services/door/tests
+  voice-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: adaraai/adara-intelligence
+          path: adara-intelligence
+      - uses: actions/checkout@v4
+        with:
+          repository: adaraai/adara-sdk
+          path: adara-sdk
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: >
+          pip install -e adara-intelligence -e "adara-sdk/python[local]"
+          -e "./services/voice-agent[dev]"
+      - run: pytest -q services/voice-agent/tests

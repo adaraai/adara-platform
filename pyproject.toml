@@ -7,3 +7,10 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
+
+# This root package is a version/dev-dependency placeholder, not an importable module — real
+# packages live under packages/ and services/, each with its own pyproject.toml. Without this,
+# setuptools' auto-discovery sees apps/, packages/, services/ and refuses to build, treating them
+# as ambiguous top-level packages.
+[tool.setuptools]
+packages = []

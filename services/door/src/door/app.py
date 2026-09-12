@@ -188,7 +188,9 @@ def create_app(config: Config | None = None, brain: Brain | None = None) -> Fast
                 'type': 'invalid_request_error',
             })
         try:
-            result = brain.understand(text, locale=body.get('locale'), language=body.get('language'))
+            result = brain.understand(
+                text, locale=body.get('locale'), language=body.get('language'),
+            )
             return result.get('context') or {
                 'matches': [], 'gaps': [], 'concepts': [],
                 'provisional': result.get('provisional', True),
@@ -244,9 +246,9 @@ def create_app(config: Config | None = None, brain: Brain | None = None) -> Fast
     @app.post('/v1/speech/transcribe')
     async def transcribe(
         _key: Annotated[str, Depends(require_api_key)],
-        file: UploadFile = File(...),
-        language: str | None = Form(default=None),
-        diarize: bool = Form(default=False),
+        file: Annotated[UploadFile, File()],
+        language: Annotated[str | None, Form()] = None,
+        diarize: Annotated[bool, Form()] = False,
     ) -> dict:
         del diarize  # accepted for contract compatibility; not wired yet
         payload = await file.read()
@@ -260,7 +262,9 @@ def create_app(config: Config | None = None, brain: Brain | None = None) -> Fast
                 status_code=413,
                 detail={
                     'code': 'payload_too_large',
-                    'message': f'Audio exceeds {MAX_UPLOAD_BYTES} bytes. Use async jobs when available.',
+                    'message': (
+                        f'Audio exceeds {MAX_UPLOAD_BYTES} bytes. Use async jobs when available.'
+                    ),
                     'type': 'invalid_request_error',
                 },
             )

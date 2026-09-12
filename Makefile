@@ -1,4 +1,4 @@
-.PHONY: dev api api-stub test door-test compose-up compose-down
+.PHONY: dev api api-stub test door-test voice-agent-test compose-up compose-down
 
 dev: compose-up
 	$(MAKE) api
@@ -17,9 +17,13 @@ test:
 	npm test --prefix apps/api
 	python -m pytest -q packages/providers
 	python -m pytest -q services/door/tests
+	python -m pytest -q services/voice-agent/tests
 
 door-test:
 	python -m pytest -q services/door/tests
+
+voice-agent-test:
+	python -m pytest -q services/voice-agent/tests
 
 compose-up:
 	docker compose up -d postgres redis

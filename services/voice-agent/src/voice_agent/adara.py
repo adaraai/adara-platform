@@ -24,9 +24,8 @@ a user has recorded thirty seconds of audio is a worse product than not showing 
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
-
 import struct
+from dataclasses import dataclass, field
 
 from adara import Adara, AdaraError, NotImplementedYet
 
