@@ -36,7 +36,7 @@ developer landing page, and the web version of the voice product — all in one 
 cd adara-platform/apps/web
 npm install
 npm run dev
-# → http://localhost:5173
+# → http://localhost:8080
 ```
 
 > The Door runs separately on `:8080`. The web app calls it for live API data on the
@@ -51,15 +51,34 @@ npm run preview   # Preview the production bundle locally
 npm run lint      # ESLint
 ```
 
-## Deploy
+## Deploy (Vercel)
 
-Hosted on Vercel. Push to `main` triggers a deploy automatically.
+This app is a Vite SPA. Deploy **this folder** as the Vercel project root so the
+framework, install, and output directory are detected correctly.
+
+### New Vercel project (Git)
+
+1. Import the `adara-platform` Git repository.
+2. Set **Root Directory** to `apps/web`.
+3. Leave the framework preset as **Vite** (`vercel.json` pins this).
+4. Build command: `npm run build` · Output: `dist` · Install: `npm ci`.
+5. Assign the production domain and deploy.
+
+Pushing to `main` then deploys automatically. Unrelated monorepo changes are skipped
+via `ignoreCommand` in `vercel.json`.
+
+### CLI
+
+From this folder (after `npx vercel link` with root `apps/web`):
 
 ```bash
+cd adara-platform/apps/web
 npx vercel --prod
 ```
 
-The `vercel.json` in this folder sets up SPA routing (all paths → `index.html`).
+`vercel.json` rewrites unknown paths to `index.html` so React Router deep links
+(`/docs/...`, `/news/:slug`, etc.) work on refresh. Do not enable **Clean URLs** —
+that setting breaks the `/index.html` rewrite.
 
 ---
 
