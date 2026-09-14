@@ -64,8 +64,7 @@ framework, install, and output directory are detected correctly.
 4. Build command: `npm run build` · Output: `dist` · Install: `npm ci`.
 5. Assign the production domain and deploy.
 
-Pushing to `main` then deploys automatically. Unrelated monorepo changes are skipped
-via `ignoreCommand` in `vercel.json`.
+Pushing to `main` then deploys automatically.
 
 ### CLI
 
