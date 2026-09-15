@@ -17,13 +17,13 @@ export type ChatBubbleProps = {
 
 function LangLabel({ children, align = "left" }: { children: string; align?: "left" | "right" }) {
   return (
-    <Text
-      variant="caption"
-      className={cn(
-        "mb-1 font-sans-semibold text-text-tertiary",
-        align === "right" ? "text-right" : undefined,
-      )}
-    >
+      <Text
+        variant="caption"
+        className={cn(
+          "mb-1 font-semibold text-text-tertiary",
+          align === "right" ? "text-right" : undefined,
+        )}
+      >
       {children}
     </Text>
   );
@@ -102,7 +102,7 @@ export function LanguagePair({ fromLang, toLang, compact }: LanguagePairProps) {
       <Text
         numberOfLines={1}
         style={{ fontSize, lineHeight, flexShrink: 0 }}
-        className="font-sans-medium text-text"
+        className="font-medium text-text"
       >
         {fromLang}
       </Text>
@@ -112,7 +112,7 @@ export function LanguagePair({ fromLang, toLang, compact }: LanguagePairProps) {
       <Text
         numberOfLines={1}
         style={{ fontSize, lineHeight, flexShrink: 0 }}
-        className="font-sans-medium text-text"
+        className="font-medium text-text"
       >
         {toLang}
       </Text>
@@ -163,7 +163,7 @@ export function VoiceNote({ duration, lang, progress = 0.62, seed = 5 }: VoiceNo
 
         <Text
           variant="caption"
-          className="shrink-0 font-sans-medium text-text-secondary"
+          className="shrink-0 font-medium text-text-secondary"
           style={{ marginRight: 8 }}
         >
           {duration}

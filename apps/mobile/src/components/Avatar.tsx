@@ -29,7 +29,9 @@ export function Avatar({ uri, source, initials, size = 48, className }: AvatarPr
       {imageSource ? (
         <Image source={imageSource} style={{ height: size, width: size }} />
       ) : (
-        <Text className="font-display text-heading text-primary">{initials}</Text>
+        <Text variant="heading" className="text-primary">
+          {initials}
+        </Text>
       )}
     </View>
   );

@@ -14,9 +14,8 @@ import { webRootStyle } from "@/lib/webLayout";
 
 import "../global.css";
 
-// Hold the native splash until Sora/Nunito are ready, so no frame renders
-// with the system fallback and then reflows. Web renders immediately — fonts
-// swap in when ready and the cached build avoids a blank first paint.
+// Hold the native splash until icon fonts are ready. Body type is system UI
+// (ChatGPT product stack), so we only wait on Ionicons.
 void SplashScreen.preventAutoHideAsync();
 
 const webSafeAreaMetrics =
@@ -54,17 +53,12 @@ export default function RootLayout() {
           <StatusBar style={scheme === "dark" ? "light" : "dark"} />
           <WebFrame>
             <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: "transparent", flex: 1 } }}>
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen
-                name="voice"
-                options={{
-                  presentation: Platform.OS === "web" ? "card" : "fullScreenModal",
-                  animation: "fade",
-                }}
-              />
+              <Stack.Screen name="index" />
+              <Stack.Screen name="profile" options={{ animation: "slide_from_right" }} />
               <Stack.Screen name="chat/[id]" options={{ animation: "slide_from_right" }} />
               <Stack.Screen name="notifications" options={{ animation: "slide_from_right" }} />
               <Stack.Screen name="voice-settings" options={{ animation: "slide_from_right" }} />
+              <Stack.Screen name="voice" options={{ animation: "fade" }} />
             </Stack>
           </WebFrame>
         </View>

@@ -37,6 +37,10 @@ export default function Root({ children }: PropsWithChildren) {
               }
               body {
                 background-color: #f1f1f3;
+                font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+                  "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
               }
               html.dark body {
                 background-color: #161616;

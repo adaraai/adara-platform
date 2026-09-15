@@ -5,14 +5,12 @@ import {
   type ReactNode,
 } from "react";
 import Svg, { Circle, Line, Path, Polyline, Rect } from "react-native-svg";
+import type { IconType } from "react-icons";
 import { FiGlobe, FiMic } from "react-icons/fi";
 import { LuSparkles } from "react-icons/lu";
 import { TbLanguage } from "react-icons/tb";
 
-type IconFn = (props: { size?: number; color?: string }) => ReactElement<{
-  attr?: Record<string, string | number>;
-  children?: ReactNode;
-}>;
+type IconFn = IconType;
 
 /**
  * Renders any `react-icons` glyph on React Native via `react-native-svg`.
@@ -22,16 +20,24 @@ export function ReactIcon({
   icon: Icon,
   size = 24,
   color = "#111111",
+  strokeWidth: strokeWidthProp,
 }: {
   icon: IconFn;
   size?: number;
   color?: string;
+  /** Override stroke weight for outline icons (Feather default is 2). */
+  strokeWidth?: number;
 }) {
-  const tree = Icon({ size, color });
+  const tree = Icon({ size, color }) as ReactElement<{
+    attr?: Record<string, string | number>;
+    children?: ReactNode;
+  }>;
   const attr = tree.props.attr ?? {};
   const viewBox = String(attr.viewBox ?? "0 0 24 24");
   const stroked = attr.stroke === "currentColor" || attr.fill === "none";
-  const strokeWidth = Number(attr.strokeWidth ?? (stroked ? 2 : 0));
+  const strokeWidth = Number(
+    strokeWidthProp ?? attr.strokeWidth ?? (stroked ? 2 : 0),
+  );
 
   return (
     <Svg width={size} height={size} viewBox={viewBox} fill="none">

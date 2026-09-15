@@ -31,7 +31,7 @@ export function Chip({ label, selected, onPress, className }: ChipProps) {
     >
       <Text
         className={cn(
-          "font-sans-medium text-callout",
+          "font-medium text-callout",
           selected ? "text-text-inverse" : "text-text-secondary",
         )}
       >

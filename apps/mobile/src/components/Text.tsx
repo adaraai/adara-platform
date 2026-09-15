@@ -1,11 +1,14 @@
-import { Text as RNText, type TextProps as RNTextProps } from "react-native";
+import {
+  Text as RNText,
+  type TextProps as RNTextProps,
+} from "react-native";
 
 import { cn } from "@/lib/cn";
+import { textFontStyle } from "@/theme/fonts";
 
 /**
- * The type scale, as named roles rather than sizes. Using `variant` instead
- * of raw `text-*` classes keeps headline/body pairings consistent and means
- * the scale can be retuned in one place.
+ * Named type roles on the ChatGPT product face (system UI / SF Pro / Roboto).
+ * Weights use Tailwind `font-*`; the face comes from `textFontStyle`.
  */
 export type TextVariant =
   | "hero"
@@ -20,16 +23,16 @@ export type TextVariant =
   | "micro";
 
 const variants: Record<TextVariant, string> = {
-  hero: "font-display-bold text-hero text-text",
-  display: "font-display text-display text-text",
-  title: "font-display text-title text-text",
-  heading: "font-display text-heading text-text",
-  body: "font-sans text-body text-text",
-  bodyStrong: "font-sans-semibold text-body text-text",
-  callout: "font-sans text-callout text-text-secondary",
-  caption: "font-sans text-caption text-text-secondary",
-  label: "font-sans-semibold text-caption text-text",
-  micro: "font-sans-semibold text-micro uppercase text-text-tertiary",
+  hero: "font-bold text-hero text-text",
+  display: "font-semibold text-display text-text",
+  title: "font-semibold text-title text-text",
+  heading: "font-semibold text-heading text-text",
+  body: "font-normal text-body text-text",
+  bodyStrong: "font-semibold text-body text-text",
+  callout: "font-normal text-callout text-text-secondary",
+  caption: "font-normal text-caption text-text-secondary",
+  label: "font-semibold text-caption text-text",
+  micro: "font-medium text-micro uppercase text-text-tertiary",
 };
 
 export type TextProps = RNTextProps & {
@@ -37,6 +40,12 @@ export type TextProps = RNTextProps & {
   className?: string;
 };
 
-export function Text({ variant = "body", className, ...rest }: TextProps) {
-  return <RNText className={cn(variants[variant], className)} {...rest} />;
+export function Text({ variant = "body", className, style, ...rest }: TextProps) {
+  return (
+    <RNText
+      className={cn(variants[variant], className)}
+      style={[textFontStyle, style]}
+      {...rest}
+    />
+  );
 }

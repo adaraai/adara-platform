@@ -55,7 +55,7 @@ function LanguageChip({
     >
       <Text
         numberOfLines={1}
-        className="font-sans-medium text-body text-text"
+        className="font-medium text-body text-text"
         style={{ flexShrink: 1 }}
       >
         {languageLabel(label)}
@@ -162,7 +162,7 @@ export function LanguagePairPicker({
         >
           <Text
             numberOfLines={1}
-            className="font-sans-medium text-caption text-text"
+            className="font-medium text-caption text-text"
             style={{ flexShrink: 0 }}
           >
             {languageLabel(fromLang)}
@@ -175,7 +175,7 @@ export function LanguagePairPicker({
           />
           <Text
             numberOfLines={1}
-            className="font-sans-medium text-caption text-text"
+            className="font-medium text-caption text-text"
             style={{ flexShrink: 0 }}
           >
             {languageLabel(toLang)}
@@ -195,7 +195,7 @@ export function LanguagePairPicker({
             style={{ paddingBottom: Math.max(insets.bottom, 16) }}
           >
             <View className="flex-row items-center justify-between border-b border-border px-gutter py-4">
-              <Text variant="bodyStrong">
+              <Text variant="heading" accessibilityRole="header">
                 {side === "from" ? "Translate from" : "Translate to"}
               </Text>
               <Pressable
@@ -250,7 +250,7 @@ export function LanguagePairPicker({
           style={{ paddingBottom: Math.max(insets.bottom, 16) }}
         >
           <View className="flex-row items-center justify-between border-b border-border px-gutter py-4">
-            <Text variant="bodyStrong">
+            <Text variant="heading" accessibilityRole="header">
               {side === "from" ? "Translate from" : "Translate to"}
             </Text>
             <Pressable

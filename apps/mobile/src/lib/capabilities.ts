@@ -28,7 +28,7 @@ export const capabilities: Capability[] = [
     subtitle: "Live translation",
     icon: "mic-outline",
     waveform: true,
-    href: "/voice",
+    href: "/",
   },
   {
     id: "text",
@@ -46,5 +46,5 @@ export const primaryFeature: PrimaryFeature = {
   icon: "mic-outline",
   waveform: true,
   cta: "Start talking",
-  href: "/voice",
+  href: "/",
 };

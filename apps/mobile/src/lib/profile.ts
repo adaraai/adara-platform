@@ -22,6 +22,6 @@ export const currentUser: UserProfile = {
   avatar: brandImages.pratik,
   location: "Accra",
   plan: "Early access",
-  accountHint: "Ac no. 8050530XXX",
+  accountHint: "Voice early access",
   language: "Twi",
 };

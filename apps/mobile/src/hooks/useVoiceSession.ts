@@ -53,7 +53,11 @@ export type VoiceSessionState = {
   error: string | null;
   startRecording: () => Promise<void>;
   stopAndSend: () => Promise<void>;
+  /** Halt recording without uploading — used for mute / discard. */
+  cancelRecording: () => Promise<void>;
   sendText: (text: string) => Promise<void>;
+  /** Upload a picked audio file as a turn. */
+  sendAudioUri: (uri: string, options?: { name?: string; type?: string }) => Promise<void>;
   speakReply: (text: string, language?: string | null) => Promise<void>;
 };
 
@@ -221,12 +225,53 @@ export function useVoiceSession(options: {
     }
   }, [micState, recorder]);
 
+  const cancelRecording = useCallback(async () => {
+    if (micState !== "recording") return;
+    try {
+      await recorder.stop();
+    } catch {
+      // Already stopped — still return to idle.
+    } finally {
+      setMicState("idle");
+    }
+  }, [micState, recorder]);
+
   const sendText = useCallback(async (text: string) => {
     const sid = sessionIdRef.current;
     if (!sid || !text.trim()) return;
 
     setMicState("processing");
     const result = await agent.sendText(sid, text);
+    setMicState("idle");
+
+    if (result.ok) {
+      setTurns((prev) => {
+        const { turn } = result.data;
+        const idx = prev.findIndex((t) => t.id === turn.id);
+        if (idx === -1) return [...prev, turn];
+        const next = [...prev];
+        next[idx] = turn;
+        return next;
+      });
+    } else {
+      setError(result.message);
+    }
+  }, []);
+
+  const sendAudioUri = useCallback(async (
+    uri: string,
+    options: { name?: string; type?: string } = {},
+  ) => {
+    const sid = sessionIdRef.current;
+    if (!sid || !uri) return;
+
+    setMicState("processing");
+    const lower = (options.name ?? uri).toLowerCase();
+    const isWav = lower.endsWith(".wav") || lower.includes(".wav");
+    const result = await agent.sendAudio(sid, uri, {
+      name: options.name ?? (isWav ? "upload.wav" : "upload.m4a"),
+      type: options.type ?? (isWav ? "audio/wav" : "audio/m4a"),
+    });
     setMicState("idle");
 
     if (result.ok) {
@@ -252,7 +297,9 @@ export function useVoiceSession(options: {
     error,
     startRecording,
     stopAndSend,
+    cancelRecording,
     sendText,
+    sendAudioUri,
     speakReply,
   };
 }

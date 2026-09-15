@@ -19,28 +19,27 @@ import { useTokens } from "@/theme";
 function SettingRow({
   icon,
   title,
-  subtitle,
+  description,
   trailing,
 }: {
   icon: keyof typeof Ionicons.glyphMap;
   title: string;
-  subtitle?: string;
+  description?: string;
   trailing?: React.ReactNode;
 }) {
   const tokens = useTokens();
 
   return (
-    <View className="flex-row items-center gap-3 py-3">
+    <View
+      className="flex-row items-center gap-3 py-3"
+      accessibilityLabel={description ? `${title}. ${description}` : title}
+    >
       <View className="h-10 w-10 items-center justify-center rounded-full border border-border bg-surface-sunken">
         <Ionicons name={icon} size={18} color={tokens.text} />
       </View>
-      <View className="min-w-0 flex-1">
+      <View className="min-w-0 flex-1 gap-0.5">
         <Text variant="bodyStrong">{title}</Text>
-        {subtitle ? (
-          <Text variant="caption" className="mt-0.5 text-text-secondary">
-            {subtitle}
-          </Text>
-        ) : null}
+        {description ? <Text variant="callout">{description}</Text> : null}
       </View>
       {trailing}
     </View>
@@ -61,23 +60,55 @@ function ChoiceChip({
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ selected }}
+      accessibilityLabel={label}
       onPress={() => {
         tapLight();
         onPress();
       }}
-      className="mr-2 mb-2 rounded-full px-3 py-2 active:opacity-80"
+      className="mb-2 mr-2 rounded-full px-3.5 py-2 active:opacity-80"
       style={{
-        backgroundColor: selected ? tokens.text : tokens.scheme === "dark" ? "#1C1C1C" : "#F0F0F0",
+        backgroundColor: selected
+          ? tokens.text
+          : tokens.scheme === "dark"
+          ? "#1C1C1C"
+          : "#F0F0F0",
       }}
     >
       <Text
-        variant="caption"
+        variant="label"
         style={{ color: selected ? tokens.onPrimary : tokens.text }}
-        className="font-sans-medium"
       >
         {label}
       </Text>
     </Pressable>
+  );
+}
+
+function SettingsSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Card tone="sunken" className="gap-1">
+      <Text
+        variant="label"
+        className="text-text-tertiary"
+        accessibilityRole="header"
+      >
+        {title}
+      </Text>
+      {description ? (
+        <Text variant="callout" className="mb-2">
+          {description}
+        </Text>
+      ) : null}
+      {children}
+    </Card>
   );
 }
 
@@ -92,31 +123,37 @@ export default function VoiceSettingsScreen() {
 
   return (
     <Screen edges={{ bottom: false }}>
-      <View className="flex-row items-center justify-between px-gutter pb-3 pt-1">
+      <View className="flex-row items-center gap-2 px-gutter pb-2 pt-3">
         <IconButton
-          icon="arrow-back"
-          label="Go back"
+          icon="chevron-back"
+          label="Back"
           onPress={() => {
             tapLight();
             goBackOrHome(router);
           }}
         />
-        <Text variant="bodyStrong" className="font-sans-semibold">
-          Voice settings
+        <Text
+          variant="display"
+          accessibilityRole="header"
+          accessibilityLabel="Voice settings"
+        >
+          Voice
         </Text>
-        <View className="w-11" />
       </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="gap-4 px-gutter pb-10 pt-1"
+        contentContainerClassName="gap-5 px-gutter pb-10 pt-2"
       >
-        <Card tone="sunken">
-          <Text variant="micro">Region</Text>
-          <Text variant="caption" className="mb-3 mt-1 text-text-secondary">
-            Sets which local references Adara looks up (momo in Ghana, NEPA in Nigeria).
-          </Text>
-          <View className="flex-row flex-wrap">
+        <SettingsSection
+          title="Region"
+          description="Local references Adara should know — like momo in Ghana or NEPA in Nigeria."
+        >
+          <View
+            className="mt-1 flex-row flex-wrap"
+            accessibilityRole="radiogroup"
+            accessibilityLabel="Region"
+          >
             {VOICE_REGIONS.map((region) => (
               <ChoiceChip
                 key={region.code}
@@ -131,15 +168,17 @@ export default function VoiceSettingsScreen() {
               />
             ))}
           </View>
-        </Card>
+        </SettingsSection>
 
-        <Card tone="sunken">
-          <Text variant="micro">Speech language</Text>
-          <Text variant="caption" className="mb-3 mt-1 text-text-secondary">
-            Sent to the speech model as an adapter hint. Use English for mixed Ghanaian /
-            Nigerian English; pick Twi or Pidgin for those languages.
-          </Text>
-          <View className="flex-row flex-wrap">
+        <SettingsSection
+          title="Speech language"
+          description="Hint for the speech model. Use English for mixed Ghanaian or Nigerian English; pick Twi or Pidgin when you speak those."
+        >
+          <View
+            className="mt-1 flex-row flex-wrap"
+            accessibilityRole="radiogroup"
+            accessibilityLabel="Speech language"
+          >
             {VOICE_SPEECH_LANGUAGES.map((lang) => (
               <ChoiceChip
                 key={lang.code}
@@ -150,27 +189,26 @@ export default function VoiceSettingsScreen() {
             ))}
           </View>
           <Text variant="caption" className="mt-2 text-text-tertiary">
-            Re-open the voice screen after changing this so a new session picks it up.
+            Re-open Talk after changing this so a new session picks it up.
           </Text>
-        </Card>
+        </SettingsSection>
 
-        <Card tone="sunken">
-          <Text variant="micro">Input</Text>
+        <SettingsSection title="Input">
           <SettingRow
             icon="mic-outline"
             title="Microphone"
-            subtitle="Required for live voice sessions"
+            description="Required for live voice sessions"
             trailing={
               <Text variant="caption" className="text-text-secondary">
-                Enabled
+                On
               </Text>
             }
           />
           <View className="h-px bg-border" />
           <SettingRow
             icon="ear-outline"
-            title="Start listening automatically"
-            subtitle="Begin capture when you open voice"
+            title="Listen automatically"
+            description="Start capturing when you open Talk"
             trailing={
               <Switch
                 value={autoListen}
@@ -180,17 +218,17 @@ export default function VoiceSettingsScreen() {
                 }}
                 trackColor={{ false: tokens.textTertiary, true: tokens.text }}
                 thumbColor="#FFFFFF"
+                accessibilityLabel="Listen automatically"
               />
             }
           />
-        </Card>
+        </SettingsSection>
 
-        <Card tone="sunken">
-          <Text variant="micro">Playback</Text>
+        <SettingsSection title="Playback">
           <SettingRow
             icon="volume-high-outline"
             title="Spoken response hints"
-            subtitle="Play short cues while Adara responds"
+            description="Play short cues while Adara responds"
             trailing={
               <Switch
                 value={playbackHints}
@@ -200,10 +238,19 @@ export default function VoiceSettingsScreen() {
                 }}
                 trackColor={{ false: tokens.textTertiary, true: tokens.text }}
                 thumbColor="#FFFFFF"
+                accessibilityLabel="Spoken response hints"
               />
             }
           />
-        </Card>
+        </SettingsSection>
+
+        <Text
+          variant="caption"
+          className="mt-1 text-center text-text-tertiary"
+          accessibilityRole="text"
+        >
+          Adara Voice
+        </Text>
       </ScrollView>
     </Screen>
   );

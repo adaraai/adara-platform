@@ -22,38 +22,95 @@ const BARS = [
   { h: 24, color: "#F07AFF", delay: 30 },
 ];
 
-function Bar({ height, color, delay }: { height: number; color: string; delay: number }) {
-  const scale = useSharedValue(0.45);
+/** One bar — breathes slowly when idle, pulses fully when active (recording). */
+function Bar({
+  height,
+  color,
+  delay,
+  active,
+}: {
+  height: number;
+  color: string;
+  delay: number;
+  active: boolean;
+}) {
+  const scale = useSharedValue(0.25);
 
   useEffect(() => {
-    scale.value = withDelay(
-      delay,
-      withRepeat(
-        withSequence(
-          withTiming(1, { duration: 380, easing: Easing.inOut(Easing.sin) }),
-          withTiming(0.4, { duration: 380, easing: Easing.inOut(Easing.sin) }),
+    if (active) {
+      // Recording: fast, full-range pulse
+      scale.value = withDelay(
+        delay,
+        withRepeat(
+          withSequence(
+            withTiming(1, {
+              duration: 340,
+              easing: Easing.inOut(Easing.sin),
+            }),
+            withTiming(0.35, {
+              duration: 340,
+              easing: Easing.inOut(Easing.sin),
+            }),
+          ),
+          -1,
+          true,
         ),
-        -1,
-        true,
-      ),
-    );
-  }, [delay, scale]);
+      );
+    } else {
+      // Idle: slow, gentle breathing — always visible
+      scale.value = withDelay(
+        delay,
+        withRepeat(
+          withSequence(
+            withTiming(0.55, {
+              duration: 900,
+              easing: Easing.inOut(Easing.sin),
+            }),
+            withTiming(0.2, {
+              duration: 900,
+              easing: Easing.inOut(Easing.sin),
+            }),
+          ),
+          -1,
+          true,
+        ),
+      );
+    }
+  }, [active, delay, scale]);
 
   const style = useAnimatedStyle(() => ({
     transform: [{ scaleY: scale.value }],
+    opacity: active ? 1 : 0.45,
   }));
 
   return (
-    <Animated.View style={[styles.bar, { height, backgroundColor: color }, style]} />
+    <Animated.View
+      style={[styles.bar, { height, backgroundColor: color }, style]}
+    />
   );
 }
 
-/** Nine-bar listening wave — same motion language as the reference Talk screen. */
-export function VoiceWave() {
+/**
+ * Nine-bar voice wave.
+ *
+ * - `active={false}` (default) — slow, gentle breathing, always visible
+ * - `active={true}` — fast full-range pulse while recording
+ */
+export function VoiceWave({ active = false }: { active?: boolean }) {
   return (
-    <View style={styles.row} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+    <View
+      style={styles.row}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
       {BARS.map((b, i) => (
-        <Bar key={i} height={b.h} color={b.color} delay={b.delay} />
+        <Bar
+          key={i}
+          height={b.h}
+          color={b.color}
+          delay={b.delay}
+          active={active}
+        />
       ))}
     </View>
   );

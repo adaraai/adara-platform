@@ -47,28 +47,29 @@ module.exports = {
       },
 
       /**
-       * One scale for the whole product. `display` and `hero` are Outfit
-       * territory; everything from `body` down is Inter.
+       * ChatGPT-like product scale on the system UI face (SF Pro / Roboto /
+       * system-ui). Weights come from Tailwind `font-medium` / `font-semibold`.
        */
       fontSize: {
         hero: ["34px", { lineHeight: "40px", letterSpacing: "-0.8px" }],
         display: ["28px", { lineHeight: "34px", letterSpacing: "-0.6px" }],
         title: ["22px", { lineHeight: "28px", letterSpacing: "-0.4px" }],
         heading: ["18px", { lineHeight: "24px", letterSpacing: "-0.2px" }],
-        body: ["15px", { lineHeight: "22px", letterSpacing: "-0.1px" }],
-        callout: ["14px", { lineHeight: "20px", letterSpacing: "-0.05px" }],
+        body: ["16px", { lineHeight: "22px", letterSpacing: "-0.2px" }],
+        callout: ["14px", { lineHeight: "20px", letterSpacing: "-0.1px" }],
         caption: ["13px", { lineHeight: "18px", letterSpacing: "0px" }],
-        micro: ["11px", { lineHeight: "14px", letterSpacing: "0.6px" }],
+        micro: ["11px", { lineHeight: "14px", letterSpacing: "0.4px" }],
       },
 
       fontFamily: {
-        display: family("Sora-SemiBold"),
-        "display-medium": family("Sora-Medium"),
-        "display-bold": family("Sora-Bold"),
-        sans: family("Nunito-Regular"),
-        "sans-medium": family("Nunito-Medium"),
-        "sans-semibold": family("Nunito-SemiBold"),
-        "sans-bold": family("Nunito-Bold"),
+        // Named aliases kept for existing classNames; all resolve to system UI.
+        sans: family("System"),
+        "sans-medium": family("System"),
+        "sans-semibold": family("System"),
+        "sans-bold": family("System"),
+        display: family("System"),
+        "display-medium": family("System"),
+        "display-bold": family("System"),
       },
 
       borderRadius: {

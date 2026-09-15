@@ -1,0 +1,35 @@
+<frozen runpy>:130: RuntimeWarning: 'voice_agent.server' found in sys.modules after import of package 'voice_agent', but prior to execution of 'voice_agent.server'; this may result in unpredictable behaviour
+INFO voice_agent.adara: ADARA mode=local: running adara-intelligence in this process
+INFO __main__: adara-voice-agent listening on http://0.0.0.0:8091 (adara mode=local, reply policy=openai:gpt-4o-mini)
+INFO __main__: capabilities: {'understand': True, 'detect_language': True, 'resolve_context': True, 'transcribe': False, 'synthesize': False, 'extract_entities': False}
+INFO __main__: 172.20.10.1 - "POST /v1/agent/sessions HTTP/1.1" 201 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -
+INFO __main__: 172.20.10.1 - "GET /v1/agent/sessions/sess_d403542120df45f6aa96 HTTP/1.1" 200 -

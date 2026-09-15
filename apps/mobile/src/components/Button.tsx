@@ -64,7 +64,7 @@ export function Button({
   const content = (
     <View className="flex-row items-center justify-center gap-2">
       {leading}
-      <Text className={cn("font-sans-semibold", dims.label, labels[variant])}>
+      <Text className={cn("font-semibold", dims.label, labels[variant])}>
         {label}
       </Text>
     </View>

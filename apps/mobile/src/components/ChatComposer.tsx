@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, type RefObject } from "react";
 import { Platform, Pressable, TextInput, View } from "react-native";
 
 import { tapLight } from "@/lib/haptics";
-import { useTokens } from "@/theme";
+import { useTokens, textFontStyle } from "@/theme";
 
 export type ChatComposerProps = {
   value: string;
@@ -89,8 +89,9 @@ export function ChatComposer({
           autoCorrect
           spellCheck
           autoCapitalize="sentences"
-          className="min-w-0 flex-1 bg-transparent font-sans text-text"
+          className="min-w-0 flex-1 bg-transparent text-text"
           style={{
+            ...textFontStyle,
             fontSize: INPUT_FONT_SIZE,
             lineHeight: INPUT_LINE_HEIGHT,
             minHeight: MIN_INPUT_HEIGHT,
