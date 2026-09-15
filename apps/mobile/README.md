@@ -1,6 +1,6 @@
 # @adara/mobile
 
-ADARA's React Native client. Voice-first assistant for African languages.
+Adara's React Native client. Voice-first assistant for African languages.
 
 ## Status
 

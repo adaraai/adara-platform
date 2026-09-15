@@ -211,7 +211,7 @@ export default function ChatScreen() {
                 variant="body"
                 className="mt-2 text-center leading-relaxed text-text-secondary"
               >
-                Type or paste text in {fromLang}. ADARA will translate it to {toLang}.
+                Type or paste text in {fromLang}. Adara will translate it to {toLang}.
               </Text>
             </View>
           }

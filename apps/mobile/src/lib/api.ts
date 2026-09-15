@@ -2,7 +2,7 @@ import Constants from "expo-constants";
 import { Platform } from "react-native";
 
 /**
- * Client for the ADARA backend.
+ * Client for the Adara backend.
  *
  * Two servers can answer this, and the app does not need to know which:
  *
@@ -77,7 +77,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<ApiResult<T
         kind: "notImplemented",
         // The service explains *why* a capability is missing — no weights, no endpoint, wrong
         // transport. That sentence is more useful to a user than a generic apology.
-        message: body?.error?.message ?? "This ADARA capability is not wired up yet.",
+        message: body?.error?.message ?? "This Adara capability is not wired up yet.",
       };
     }
     if (!response.ok) {
@@ -88,7 +88,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<ApiResult<T
     return {
       ok: false,
       kind: "network",
-      message: `Cannot reach ADARA at ${baseUrl} (${err instanceof Error ? err.message : "network"}).`,
+      message: `Cannot reach Adara at ${baseUrl} (${err instanceof Error ? err.message : "network"}).`,
     };
   }
 }
@@ -102,7 +102,7 @@ async function upload<T>(path: string, form: FormData): Promise<ApiResult<T>> {
       return {
         ok: false,
         kind: "notImplemented",
-        message: body?.error?.message ?? "This ADARA capability is not wired up yet.",
+        message: body?.error?.message ?? "This Adara capability is not wired up yet.",
       };
     }
     if (!response.ok) {
@@ -113,7 +113,7 @@ async function upload<T>(path: string, form: FormData): Promise<ApiResult<T>> {
     return {
       ok: false,
       kind: "network",
-      message: `Cannot reach ADARA at ${baseUrl} (${err instanceof Error ? err.message : "network"}).`,
+      message: `Cannot reach Adara at ${baseUrl} (${err instanceof Error ? err.message : "network"}).`,
     };
   }
 }
@@ -132,7 +132,7 @@ export type Language = {
   /** What speakers call the language themselves. Present from the voice-agent service. */
   endonym?: string;
   /**
-   * The status ADARA actually reports, before it is mapped onto the five above. `claimed` means
+   * The status Adara actually reports, before it is mapped onto the five above. `claimed` means
    * a backend lists the language, which is evidence of its marketing and not of accuracy.
    */
   adaraStatus?: string;
@@ -162,7 +162,7 @@ export type Health = {
   capabilities?: Capabilities;
 };
 
-/** One thing ADARA recognised in an utterance. */
+/** One thing Adara recognised in an utterance. */
 export type ContextMatch = {
   term: string;
   concept: string;

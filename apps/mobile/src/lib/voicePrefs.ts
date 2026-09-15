@@ -13,7 +13,7 @@
 export type VoicePrefs = {
   /** ISO 3166-1 alpha-2 country, e.g. GH */
   locale: string;
-  /** ADARA speech code for ASR: en | tw | pcm | sw | yo | … */
+  /** Adara speech code for ASR: en | tw | pcm | sw | yo | … */
   speechLanguage: string;
 };
 

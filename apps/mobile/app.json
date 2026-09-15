@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ADARA",
+    "name": "Adara",
     "slug": "adara",
     "version": "0.0.0",
     "orientation": "portrait",
@@ -44,13 +44,13 @@
           "resizeMode": "contain"
         }
       ],
-      "expo-video",
       [
         "expo-audio",
         {
-          "microphonePermission": "Allow ADARA to record your voice."
+          "microphonePermission": "Allow Adara to record your voice."
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

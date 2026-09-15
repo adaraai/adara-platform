@@ -10,12 +10,11 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { WebFrame } from "@/components";
 import { fontMap, useResolvedColorScheme } from "@/theme";
-import { preloadOrbVideo } from "@/lib/orbPlayer";
 import { webRootStyle } from "@/lib/webLayout";
 
 import "../global.css";
 
-// Hold the native splash until Outfit/Inter are ready, so no frame renders
+// Hold the native splash until Sora/Nunito are ready, so no frame renders
 // with the system fallback and then reflows. Web renders immediately — fonts
 // swap in when ready and the cached build avoids a blank first paint.
 void SplashScreen.preventAutoHideAsync();
@@ -43,11 +42,6 @@ export default function RootLayout() {
       return;
     }
     if (fontsLoaded || fontError) void SplashScreen.hideAsync();
-  }, [fontsLoaded, fontError]);
-
-  useEffect(() => {
-    if (!fontsLoaded && !fontError) return;
-    preloadOrbVideo();
   }, [fontsLoaded, fontError]);
 
   const waitingOnFonts = !fontsLoaded && !fontError && Platform.OS !== "web";

@@ -114,7 +114,7 @@ export default function VoiceSettingsScreen() {
         <Card tone="sunken">
           <Text variant="micro">Region</Text>
           <Text variant="caption" className="mb-3 mt-1 text-text-secondary">
-            Sets which local references ADARA looks up (momo in Ghana, NEPA in Nigeria).
+            Sets which local references Adara looks up (momo in Ghana, NEPA in Nigeria).
           </Text>
           <View className="flex-row flex-wrap">
             {VOICE_REGIONS.map((region) => (
@@ -190,7 +190,7 @@ export default function VoiceSettingsScreen() {
           <SettingRow
             icon="volume-high-outline"
             title="Spoken response hints"
-            subtitle="Play short cues while ADARA responds"
+            subtitle="Play short cues while Adara responds"
             trailing={
               <Switch
                 value={playbackHints}

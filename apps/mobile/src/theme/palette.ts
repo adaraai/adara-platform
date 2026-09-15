@@ -1,5 +1,5 @@
 /**
- * ADARA raw color ramps.
+ * Adara raw color ramps.
  *
  * These are the only literal hex values in the app. Everything else consumes
  * semantic tokens from `colors.ts`, so a rebrand touches this file alone.

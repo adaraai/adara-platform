@@ -7,7 +7,7 @@ import { ramp, useTokens, type Tokens } from "@/theme";
 
 /**
  * Illustrated promo carousel for Home — same "soft blob + white glyph card"
- * illustration language as the reference app, redrawn with ADARA's violet /
+ * illustration language as the reference app, redrawn with Adara's violet /
  * sand / aqua / lime ramps instead of borrowing its brand colors.
  */
 

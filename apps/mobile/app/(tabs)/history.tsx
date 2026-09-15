@@ -18,7 +18,7 @@ export default function HistoryScreen() {
       <View className="px-gutter pb-2">
         <Text variant="display">Sessions</Text>
         <Text variant="caption" className="mt-1">
-          Everything you have asked ADARA
+          Everything you have asked Adara
         </Text>
       </View>
 

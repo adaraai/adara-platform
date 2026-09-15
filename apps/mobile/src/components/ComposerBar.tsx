@@ -16,7 +16,7 @@ export type ComposerBarProps = {
 
 /** Standard AI-app message composer — tap to type, mic for voice. */
 export function ComposerBar({
-  placeholder = "Ask ADARA anything…",
+  placeholder = "Ask Adara anything…",
   onPress,
   onVoicePress,
   className,

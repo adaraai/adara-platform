@@ -23,7 +23,7 @@ export const notifications: NotificationItem[] = [
   {
     id: "n2",
     title: "MTN complaint draft",
-    body: "ADARA saved a follow-up message for your billing issue.",
+    body: "Adara saved a follow-up message for your billing issue.",
     time: "1h ago",
     section: "Today",
     read: false,
@@ -58,8 +58,8 @@ export const notifications: NotificationItem[] = [
   },
   {
     id: "n6",
-    title: "Welcome to ADARA",
-    body: "Start with voice or text — ADARA translates as you go.",
+    title: "Welcome to Adara",
+    body: "Start with voice or text — Adara translates as you go.",
     time: "3 days ago",
     section: "Earlier",
     read: true,

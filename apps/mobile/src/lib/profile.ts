@@ -1,6 +1,6 @@
 import type { ImageSourcePropType } from "react-native";
 
-import { avatars } from "@/lib/avatars";
+import { brandImages } from "@/lib/brand";
 
 export type UserProfile = {
   id: string;
@@ -10,14 +10,18 @@ export type UserProfile = {
   avatar: ImageSourcePropType;
   location: string;
   plan: string;
+  accountHint: string;
+  language: string;
 };
 
 export const currentUser: UserProfile = {
-  id: "alex",
-  firstName: "Alex",
-  fullName: "Alex Mensah",
-  initials: "A",
-  avatar: avatars.alex,
+  id: "pratik",
+  firstName: "Pratik",
+  fullName: "Pratik",
+  initials: "P",
+  avatar: brandImages.pratik,
   location: "Accra",
   plan: "Early access",
+  accountHint: "Ac no. 8050530XXX",
+  language: "Twi",
 };

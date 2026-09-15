@@ -1,7 +1,7 @@
 import type { Ionicons } from "@expo/vector-icons";
 
 /**
- * Presentation copy and seed data for ADARA — translation across
+ * Presentation copy and seed data for Adara — translation across
  * daily life, health, telecom, government, and legal situations.
  */
 

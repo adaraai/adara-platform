@@ -18,7 +18,7 @@
     --bg: 255 255 255;
     --surface: 255 255 255;
     --surface-raised: 255 255 255;
-    --surface-sunken: 247 247 248;
+    --surface-sunken: 246 245 251;
 
     /* Text */
     --text: 13 13 13;
@@ -26,14 +26,14 @@
     --text-tertiary: 142 142 160;
     --text-inverse: 255 255 255;
 
-    /* Brand — monochrome black / white */
-    --primary: 0 0 0;
-    --primary-pressed: 38 38 38;
-    --primary-soft: 245 245 245;
-    --on-primary: 255 255 255;
+    /* Brand — Aya-matched yellow accent for ADARA shell */
+    --primary: 255 204 8;
+    --primary-pressed: 230 180 0;
+    --primary-soft: 255 246 217;
+    --on-primary: 0 0 0;
 
-    --accent: 251 194 235;
-    --accent-soft: 255 240 250;
+    --accent: 255 204 8;
+    --accent-soft: 255 246 217;
 
     /* Status */
     --success: 92 191 74;
@@ -61,13 +61,13 @@
     --text-tertiary: 142 142 142;
     --text-inverse: 0 0 0;
 
-    --primary: 255 255 255;
-    --primary-pressed: 230 230 230;
-    --primary-soft: 38 38 38;
+    --primary: 255 204 8;
+    --primary-pressed: 230 180 0;
+    --primary-soft: 58 50 24;
     --on-primary: 0 0 0;
 
-    --accent: 233 182 127;
-    --accent-soft: 126 71 28;
+    --accent: 255 204 8;
+    --accent-soft: 58 50 24;
 
     --success: 167 227 154;
     --warning: 233 182 127;

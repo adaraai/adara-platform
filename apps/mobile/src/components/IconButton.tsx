@@ -1,6 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Pressable, View, type PressableProps } from "react-native";
 
+import { Icon, type IonName } from "@/components/Icon";
 import { cn } from "@/lib/cn";
 import { tapLight } from "@/lib/haptics";
 import { elevation, useTokens } from "@/theme";
@@ -21,7 +21,7 @@ const tones: Record<IconButtonTone, string> = {
 };
 
 export type IconButtonProps = PressableProps & {
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: IonName;
   tone?: IconButtonTone;
   size?: IconButtonSize;
   /** Small dot in the top-right, for unread notifications. */
@@ -63,14 +63,10 @@ export function IconButton({
     >
       {tone === "primary" ? (
         <View className={cn("items-center justify-center rounded-full bg-primary", dims.box)}>
-          <Ionicons name={icon} size={dims.glyph} color={tokens.onPrimary} />
+          <Icon name={icon} size={dims.glyph} color={tokens.onPrimary} />
         </View>
       ) : (
-        <Ionicons
-          name={icon}
-          size={dims.glyph}
-          color={tokens.text}
-        />
+        <Icon name={icon} size={dims.glyph} color={tokens.text} />
       )}
       {badge ? (
         <View className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-danger" />

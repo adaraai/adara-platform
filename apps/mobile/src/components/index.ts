@@ -6,11 +6,13 @@ export { AssistantMark, ChatBubble, LanguagePair, TranslationBlock, VoiceNote } 
 export { FeatureIcon, IonFeatureIcon } from "./FeatureIcon";
 export { ChatComposer } from "./ChatComposer";
 export { Chip } from "./Chip";
+export { Icon, IconWell, type IonName } from "./Icon";
 export { IconButton } from "./IconButton";
-export { Orb } from "./Orb";
 export { Gradient } from "./primitives";
 export { PromoBannerCarousel, type PromoBanner, type PromoIllustration } from "./PromoBanner";
+export { QuickAccessIcon, type QuickAccessIconName } from "./QuickAccessIcon";
 export { Screen } from "./Screen";
 export { Text, type TextVariant } from "./Text";
+export { VoiceWave } from "./VoiceWave";
 export { Waveform } from "./Waveform";
 export { WebFrame } from "./WebFrame";

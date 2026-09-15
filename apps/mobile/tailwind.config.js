@@ -62,13 +62,13 @@ module.exports = {
       },
 
       fontFamily: {
-        display: family("Outfit_600SemiBold"),
-        "display-medium": family("Outfit_500Medium"),
-        "display-bold": family("Outfit_700Bold"),
-        sans: family("Inter_400Regular"),
-        "sans-medium": family("Inter_500Medium"),
-        "sans-semibold": family("Inter_600SemiBold"),
-        "sans-bold": family("Inter_700Bold"),
+        display: family("Sora-SemiBold"),
+        "display-medium": family("Sora-Medium"),
+        "display-bold": family("Sora-Bold"),
+        sans: family("Nunito-Regular"),
+        "sans-medium": family("Nunito-Medium"),
+        "sans-semibold": family("Nunito-SemiBold"),
+        "sans-bold": family("Nunito-Bold"),
       },
 
       borderRadius: {
