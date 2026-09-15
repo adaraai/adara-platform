@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
-    "@react-navigation/bottom-tabs": "^7.4.0",
     "expo": "~57.0.20",
     "expo-asset": "~57.0.17",
     "expo-audio": "~57.0.5",

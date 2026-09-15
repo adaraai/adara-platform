@@ -6,9 +6,6 @@ import {
 } from "react";
 import Svg, { Circle, Line, Path, Polyline, Rect } from "react-native-svg";
 import type { IconType } from "react-icons";
-import { FiGlobe, FiMic } from "react-icons/fi";
-import { LuSparkles } from "react-icons/lu";
-import { TbLanguage } from "react-icons/tb";
 
 type IconFn = IconType;
 
@@ -61,7 +58,6 @@ export function ReactIcon({
           if (stroked) {
             return <Path key={index} d={d} {...commonStroke} />;
           }
-          // Filled icons (Material, etc.)
           if (p.fill === "none") return null;
           return <Path key={index} d={d} fill={color} stroke="none" />;
         }
@@ -113,24 +109,4 @@ export function ReactIcon({
       })}
     </Svg>
   );
-}
-
-export type QuickAccessIconName = "speak" | "translate" | "understand" | "languages";
-
-const ICONS: Record<QuickAccessIconName, IconFn> = {
-  speak: FiMic as IconFn,
-  translate: TbLanguage as IconFn,
-  understand: LuSparkles as IconFn,
-  languages: FiGlobe as IconFn,
-};
-
-type Props = {
-  name: QuickAccessIconName;
-  size?: number;
-  color?: string;
-};
-
-/** Quick access icons from the `react-icons` package. */
-export function QuickAccessIcon({ name, size = 24, color = "#111111" }: Props) {
-  return <ReactIcon icon={ICONS[name]} size={size} color={color} />;
 }

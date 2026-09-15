@@ -55,10 +55,7 @@ export default function RootLayout() {
             <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: "transparent", flex: 1 } }}>
               <Stack.Screen name="index" />
               <Stack.Screen name="profile" options={{ animation: "slide_from_right" }} />
-              <Stack.Screen name="chat/[id]" options={{ animation: "slide_from_right" }} />
-              <Stack.Screen name="notifications" options={{ animation: "slide_from_right" }} />
               <Stack.Screen name="voice-settings" options={{ animation: "slide_from_right" }} />
-              <Stack.Screen name="voice" options={{ animation: "fade" }} />
             </Stack>
           </WebFrame>
         </View>

@@ -1,16 +1,9 @@
 export { Avatar } from "./Avatar";
-export { Button, type ButtonProps, type ButtonVariant } from "./Button";
 export { Card, type CardProps, type CardTone } from "./Card";
-export { LanguagePairPicker } from "./LanguagePairPicker";
-export { AssistantMark, ChatBubble, LanguagePair, TranslationBlock, VoiceNote } from "./ChatBubble";
-export { FeatureIcon, IonFeatureIcon } from "./FeatureIcon";
-export { ChatComposer } from "./ChatComposer";
-export { Chip } from "./Chip";
-export { Icon, IconWell, type IonName } from "./Icon";
+export { Icon, type IonName } from "./Icon";
 export { IconButton } from "./IconButton";
 export { Gradient } from "./primitives";
-export { PromoBannerCarousel, type PromoBanner, type PromoIllustration } from "./PromoBanner";
-export { QuickAccessIcon, ReactIcon, type QuickAccessIconName } from "./QuickAccessIcon";
+export { ReactIcon } from "./ReactIcon";
 export { Screen } from "./Screen";
 export { Text, type TextVariant } from "./Text";
 export { VoiceHistoryDrawer } from "./VoiceHistoryDrawer";

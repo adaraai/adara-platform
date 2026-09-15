@@ -30,7 +30,7 @@ export type IconButtonProps = PressableProps & {
   className?: string;
 };
 
-/** Circular control used for back, menu, notifications and overlay actions. */
+/** Circular control used for back and overlay actions. */
 export function IconButton({
   icon,
   tone = "surface",

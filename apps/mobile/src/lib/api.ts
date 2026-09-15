@@ -118,26 +118,6 @@ async function upload<T>(path: string, form: FormData): Promise<ApiResult<T>> {
   }
 }
 
-export type LanguageStatus =
-  | "planned"
-  | "experimental"
-  | "research"
-  | "beta"
-  | "production";
-
-export type Language = {
-  code: string;
-  name: string;
-  status: LanguageStatus;
-  /** What speakers call the language themselves. Present from the voice-agent service. */
-  endonym?: string;
-  /**
-   * The status Adara actually reports, before it is mapped onto the five above. `claimed` means
-   * a backend lists the language, which is evidence of its marketing and not of accuracy.
-   */
-  adaraStatus?: string;
-};
-
 /**
  * What this deployment can do, answered before the user tries.
  *
@@ -153,13 +133,6 @@ export type Capabilities = {
   extract_entities: boolean;
   /** Why each unavailable capability is unavailable. Show it; do not swallow it. */
   reasons: Record<string, string>;
-};
-
-export type Health = {
-  status: string;
-  service: string;
-  mode: string;
-  capabilities?: Capabilities;
 };
 
 /** One thing Adara recognised in an utterance. */
@@ -220,34 +193,6 @@ export type Session = {
 };
 
 export const api = {
-  health: () => request<Health>("/v1/health"),
-
-  languages: () => request<{ data: Language[] }>("/v1/languages"),
-
-  models: () => request<{ data: unknown[]; note?: string }>("/v1/models"),
-
-  detectLanguage: (text: string) =>
-    request<{ code: string | null; confidence: number | null; abstained?: boolean }>(
-      "/v1/language/detect",
-      { method: "POST", body: JSON.stringify({ text }) },
-    ),
-
-  generate: (prompt: string) =>
-    request<{ text: string }>("/v1/context/generate", {
-      method: "POST",
-      body: JSON.stringify({ prompt }),
-    }),
-
-  /**
-   * Kept for the older call site. The voice-agent service answers 501 here and explains why: a
-   * server cannot read a file URI off the phone. Use `agent.sendAudio`, which uploads the bytes.
-   */
-  transcribe: (uri: string) =>
-    request<{ text: string }>("/v1/speech/transcribe", {
-      method: "POST",
-      body: JSON.stringify({ audio: uri }),
-    }),
-
   /**
    * Convert text to speech.
    *
