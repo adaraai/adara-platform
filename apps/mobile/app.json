@@ -8,6 +8,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "backgroundColor": "#FFFFFF",
+    "icon": "./assets/icon.png",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "ai.adara.mobile",

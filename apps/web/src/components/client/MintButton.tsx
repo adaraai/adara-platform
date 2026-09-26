@@ -12,13 +12,13 @@ type MintButtonProps = {
 };
 
 const sizeClass = {
-  sm: "h-9 px-4 text-[13px]",
-  md: "h-10 px-5 text-sm",
-  lg: "h-12 px-7 text-[15px]",
+  sm: "h-9 min-h-9 px-4 text-[13px]",
+  md: "h-10 min-h-10 px-5 text-sm",
+  lg: "h-12 min-h-12 px-7 text-[15px]",
 };
 
 const baseClass =
-  "inline-flex items-center justify-center rounded-full bg-primary font-medium text-primary-foreground transition-colors hover:bg-adara-orange-hover active:bg-adara-orange-active";
+  "inline-flex items-center justify-center rounded-full bg-primary font-medium text-primary-foreground transition-colors touch-manipulation hover:bg-adara-orange-hover active:bg-adara-orange-active";
 
 export function MintButton({
   to,

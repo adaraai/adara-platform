@@ -1,58 +1,54 @@
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
-const LOGO_LIGHT = "/assets/adara-logo-light.png";
-const LOGO_DARK = "/assets/adara-logo-dark.png";
+const LOGO_MARK = "/assets/adara-mark.png";
 
 type LogoProps = {
   className?: string;
+  /** White wordmark for dark backgrounds (e.g. dark footer) */
   onDark?: boolean;
+  /** Black wordmark for light backgrounds (e.g. white header) */
+  forceLight?: boolean;
   size?: "sm" | "md";
 };
 
-export function Logo({ className, onDark = false, size = "md" }: LogoProps) {
-  const height = size === "sm" ? "h-[1.25rem] sm:h-6" : "h-7 sm:h-8";
+export function Logo({ className, onDark = false, forceLight = false, size = "md" }: LogoProps) {
+  // Keep mark + wordmark on one optical middle line for header alignment
+  const markHeight = size === "sm" ? "h-5" : "h-7";
+  const textSize = size === "sm" ? "text-[1.05rem]" : "text-[1.375rem]";
+
+  const wordmarkClass = forceLight
+    ? "text-neutral-900"
+    : onDark
+      ? "text-white"
+      : "text-neutral-900 dark:text-white";
 
   return (
     <Link
       to="/"
       aria-label="adara home"
-      className={cn("inline-flex shrink-0 items-center touch-manipulation", className)}
+      className={cn("inline-flex h-9 shrink-0 items-center gap-1.5 touch-manipulation", className)}
     >
-      {onDark ? (
-        <img
-          src={LOGO_DARK}
-          alt="adara"
-          width={124}
-          height={32}
-          className={cn("w-auto", height)}
-          decoding="async"
-          fetchPriority="high"
-          draggable={false}
-        />
-      ) : (
-        <>
-          <img
-            src={LOGO_LIGHT}
-            alt="adara"
-            width={124}
-            height={32}
-            className={cn("w-auto dark:hidden", height)}
-            decoding="async"
-            fetchPriority="high"
-            draggable={false}
-          />
-          <img
-            src={LOGO_DARK}
-            alt="adara"
-            width={124}
-            height={32}
-            className={cn("hidden w-auto dark:block", height)}
-            decoding="async"
-            draggable={false}
-          />
-        </>
-      )}
+      <img
+        src={LOGO_MARK}
+        alt=""
+        width={40}
+        height={32}
+        className={cn("block w-auto shrink-0", markHeight)}
+        decoding="async"
+        fetchPriority="high"
+        draggable={false}
+        aria-hidden
+      />
+      <span
+        className={cn(
+          "font-bold leading-none tracking-[-0.03em]",
+          textSize,
+          wordmarkClass,
+        )}
+      >
+        adara
+      </span>
     </Link>
   );
 }

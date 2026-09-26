@@ -12,6 +12,9 @@ export default defineConfig({
   preview: {
     host: "::",
     port: 4173,
+    headers: {
+      "Cache-Control": "public, max-age=31536000, immutable",
+    },
   },
   plugins: [react()],
   resolve: {
@@ -22,6 +25,8 @@ export default defineConfig({
   build: {
     target: "es2020",
     cssMinify: true,
+    sourcemap: false,
+    assetsInlineLimit: 4096,
     rollupOptions: {
       output: {
         manualChunks(id) {

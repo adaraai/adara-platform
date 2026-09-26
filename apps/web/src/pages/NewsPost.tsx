@@ -14,6 +14,12 @@ export default function NewsPost() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const root = document.documentElement;
+    const wasDark = root.classList.contains("dark");
+    root.classList.remove("dark");
+    return () => {
+      if (wasDark) root.classList.add("dark");
+    };
   }, [slug]);
 
   useEffect(() => {
@@ -27,54 +33,54 @@ export default function NewsPost() {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-white text-neutral-900">
         <Header />
         <main className="flex min-h-[70vh] flex-col items-center justify-center px-4 pt-24 text-center">
-          <h1 className="text-3xl font-medium tracking-[-0.03em] text-foreground">
+          <h1 className="text-3xl font-bold tracking-[-0.03em] text-neutral-900">
             Story not found
           </h1>
-          <p className="mt-3 text-muted-foreground">That post is not in the archive.</p>
+          <p className="mt-3 text-neutral-500">That post is not in the archive.</p>
           <Link
             to="/news"
-            className="mt-8 inline-flex items-center gap-2 text-sm text-foreground hover:text-muted-foreground"
+            className="mt-8 inline-flex items-center gap-2 text-sm text-neutral-900 hover:text-neutral-500"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to news
           </Link>
         </main>
-        <Footer />
+        <Footer variant="light" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white text-neutral-900">
       <Header />
-      <main className="adara-ambient pt-[calc(4rem+env(safe-area-inset-top))] sm:pt-[4.25rem]">
-        <article className="section-auto py-16 sm:py-24">
+      <main className="pt-[calc(4rem+env(safe-area-inset-top))] sm:pt-[4.25rem]">
+        <article className="py-16 sm:py-24">
           <div className="mx-auto max-w-3xl px-4 sm:px-6">
             <Link
               to="/news"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className="inline-flex items-center gap-2 text-sm text-neutral-500 transition-colors hover:text-neutral-900"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               All posts
             </Link>
 
-            <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+            <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.14em] text-neutral-500">
               {post.label}
             </p>
-            <h1 className="mt-3 text-[clamp(1.875rem,4.2vw,2.75rem)] font-medium leading-[1.12] tracking-[-0.035em] text-foreground">
+            <h1 className="mt-3 text-[clamp(1.875rem,4.2vw,2.75rem)] font-bold leading-[1.12] tracking-[-0.035em] text-neutral-900">
               {post.title}
             </h1>
             <time
               dateTime={post.isoDate}
-              className="mt-4 block text-sm text-muted-foreground"
+              className="mt-4 block text-sm text-neutral-500"
             >
               {post.date}
             </time>
 
-            <div className="relative mt-10 aspect-[16/9] overflow-hidden rounded-2xl bg-muted/10">
+            <div className="relative mt-10 aspect-[16/9] overflow-hidden rounded-2xl bg-neutral-100">
               {post.image ? (
                 <img
                   src={post.image}
@@ -106,14 +112,14 @@ export default function NewsPost() {
                 block.type === "h2" ? (
                   <h2
                     key={index}
-                    className="pt-4 text-xl font-medium tracking-[-0.02em] text-foreground sm:text-2xl"
+                    className="pt-4 text-xl font-bold tracking-[-0.02em] text-neutral-900 sm:text-2xl"
                   >
                     {block.text}
                   </h2>
                 ) : (
                   <p
                     key={index}
-                    className="text-base leading-relaxed text-foreground/85 sm:text-lg sm:leading-relaxed"
+                    className="text-base leading-relaxed text-neutral-700 sm:text-lg sm:leading-relaxed"
                   >
                     {block.text}
                   </p>
@@ -124,9 +130,9 @@ export default function NewsPost() {
         </article>
 
         {related.length > 0 ? (
-          <section className="section-auto border-t border-border/60 py-16 sm:py-20">
+          <section className="border-t border-neutral-200 py-16 sm:py-20">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <h2 className="text-xl font-medium tracking-[-0.02em] text-foreground sm:text-2xl">
+              <h2 className="text-xl font-bold tracking-[-0.02em] text-neutral-900 sm:text-2xl">
                 More from the lab
               </h2>
               <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -138,7 +144,7 @@ export default function NewsPost() {
           </section>
         ) : null}
       </main>
-      <Footer />
+      <Footer variant="light" />
     </div>
   );
 }

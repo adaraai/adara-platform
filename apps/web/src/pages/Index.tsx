@@ -2,11 +2,13 @@ import { useEffect } from "react";
 import { Header } from "@/components/client/Header";
 import { Hero } from "@/components/client/Hero";
 import { FeaturesSection } from "@/components/client/FeaturesSection";
-import { SolutionSection } from "@/components/client/SolutionSection";
-import { Testimonials } from "@/components/client/Testimonials";
-import { CtaSection } from "@/components/client/CtaSection";
+import { MissionSection } from "@/components/client/MissionSection";
+import { ApproachSection } from "@/components/client/ApproachSection";
+import { AudienceSection } from "@/components/client/AudienceSection";
+import { TrustSection } from "@/components/client/TrustSection";
 import { LatestNewsSection } from "@/components/client/LatestNewsSection";
 import { ContactForm } from "@/components/client/ContactForm";
+import { TeaserSection } from "@/components/client/TeaserSection";
 import { Footer } from "@/components/client/Footer";
 
 const Index = () => {
@@ -20,16 +22,18 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-white">
+    <div className="min-h-screen overflow-x-clip bg-[#0B0F0D]">
       <Header variant="home" />
       <Hero />
-      <main>
+      <main className="hero-geo">
         <FeaturesSection />
-        <SolutionSection />
-        <Testimonials />
+        <MissionSection />
+        <ApproachSection />
+        <AudienceSection />
+        <TrustSection />
         <LatestNewsSection />
         <ContactForm />
-        <CtaSection />
+        <TeaserSection />
       </main>
       <Footer />
     </div>

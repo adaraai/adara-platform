@@ -71,7 +71,14 @@ export default {
 				'spring': 'var(--transition-spring)'
 			},
 			fontFamily: {
-				sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+				sans: [
+					'NexaText',
+					'"Nexa Text"',
+					'"Noto Sans"',
+					'ui-sans-serif',
+					'system-ui',
+					'sans-serif',
+				],
 				mono: ['Geist Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
 			},
 			borderRadius: {

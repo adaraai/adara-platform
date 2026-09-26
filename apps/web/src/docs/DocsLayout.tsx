@@ -110,7 +110,7 @@ export default function DocsLayout({ children }: { children?: React.ReactNode })
             className="absolute inset-0 bg-black/40"
             onClick={() => setSidebarOpen(false)}
           />
-          <aside className="relative z-10 w-80 bg-white dark:bg-zinc-950 h-full flex flex-col shadow-xl">
+          <aside className="relative z-10 flex h-full w-[min(20rem,88vw)] flex-col bg-white shadow-xl dark:bg-zinc-950">
             <Sidebar onClose={() => setSidebarOpen(false)} />
           </aside>
         </div>
@@ -119,26 +119,31 @@ export default function DocsLayout({ children }: { children?: React.ReactNode })
       {/* Main content */}
       <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
         {/* Top bar */}
-        <header className="flex items-center gap-3 px-5 lg:px-10 py-5 border-b border-zinc-100 dark:border-zinc-900 shrink-0">
+        <header className="flex items-center gap-2 border-b border-zinc-100 px-4 py-4 dark:border-zinc-900 sm:gap-3 sm:px-5 sm:py-5 lg:px-10 shrink-0">
           <button
-            className="lg:hidden text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+            type="button"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-500 hover:bg-zinc-100 hover:text-zinc-800 dark:hover:bg-zinc-900 dark:hover:text-zinc-200 lg:hidden"
             onClick={() => setSidebarOpen(true)}
+            aria-label="Open docs menu"
           >
             <Menu size={20} />
           </button>
 
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-base text-zinc-400">
-            <Link to="/docs/introduction" className="hover:text-zinc-700 dark:hover:text-zinc-200">
+          <div className="flex min-w-0 items-center gap-1.5 text-sm text-zinc-400 sm:gap-2 sm:text-base">
+            <Link
+              to="/docs/introduction"
+              className="hidden hover:text-zinc-700 dark:hover:text-zinc-200 sm:inline"
+            >
               Documentation
             </Link>
-            <ChevronRight size={16} />
-            <span className="text-zinc-700 dark:text-zinc-200 font-medium">{pageLabel}</span>
+            <ChevronRight size={16} className="hidden shrink-0 sm:block" />
+            <span className="truncate text-zinc-700 dark:text-zinc-200 font-medium">{pageLabel}</span>
           </div>
 
           <Link
             to="/signup"
-            className="ml-auto rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white dark:bg-white dark:text-zinc-900"
+            className="ml-auto shrink-0 rounded-lg bg-zinc-900 px-3 py-2 text-xs font-medium text-white dark:bg-white dark:text-zinc-900 sm:px-4 sm:text-sm"
           >
             Get API key
           </Link>

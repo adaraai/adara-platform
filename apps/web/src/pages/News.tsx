@@ -11,8 +11,12 @@ export default function News() {
   useEffect(() => {
     window.scrollTo(0, 0);
     document.title = "News | Adara";
+    const root = document.documentElement;
+    const wasDark = root.classList.contains("dark");
+    root.classList.remove("dark");
     return () => {
       document.title = "Adara, Data and tools that make AI understand Africa";
+      if (wasDark) root.classList.add("dark");
     };
   }, []);
 
@@ -25,35 +29,35 @@ export default function News() {
   const gridPosts = featured ? posts.slice(1) : posts;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white text-neutral-900">
       <Header />
-      <main className="adara-ambient pt-[calc(4rem+env(safe-area-inset-top))] sm:pt-[4.25rem]">
-        <section className="section-auto py-16 sm:py-24">
+      <main className="pt-[calc(4rem+env(safe-area-inset-top))] sm:pt-[4.25rem]">
+        <section className="py-12 sm:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl">
-              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-neutral-500">
                 Adara
               </p>
-              <h1 className="mt-3 text-[clamp(2rem,4vw,3rem)] font-normal leading-[1.08] tracking-[-0.035em] text-foreground">
+              <h1 className="mt-3 text-[clamp(1.85rem,5.5vw,3rem)] font-bold leading-[1.08] tracking-[-0.035em] text-neutral-900">
                 Latest news
-                <span className="text-gray-out"> from the lab.</span>
+                <span className="font-normal text-neutral-400"> from the lab.</span>
               </h1>
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-neutral-500 sm:text-lg">
                 Models, corpus, APIs, and security, updates as we ship.
               </p>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-2">
+            <div className="mt-8 -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
               {NEWS_LABELS.map((item) => (
                 <button
                   key={item}
                   type="button"
                   onClick={() => setLabel(item)}
                   className={cn(
-                    "inline-flex h-9 items-center rounded-full border px-3.5 text-sm transition-colors",
+                    "inline-flex h-9 shrink-0 items-center rounded-full border px-3.5 text-sm transition-colors",
                     label === item
-                      ? "border-foreground bg-foreground text-background"
-                      : "border-border bg-background text-muted-foreground hover:border-foreground/20 hover:text-foreground"
+                      ? "border-neutral-900 bg-neutral-900 text-white"
+                      : "border-neutral-200 bg-white text-neutral-500 hover:border-neutral-400 hover:text-neutral-900"
                   )}
                 >
                   {item}
@@ -75,7 +79,7 @@ export default function News() {
           </div>
         </section>
       </main>
-      <Footer />
+      <Footer variant="light" />
     </div>
   );
 }

@@ -1,0 +1,32 @@
+/* Equinix-matched typeface: NexaText */
+@font-face {
+  font-family: NexaText;
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/NexaText-Book.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: NexaText;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/NexaText-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: NexaText;
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/NexaText-Bold.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: NexaText;
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/NexaText-ExtraBold.woff2") format("woff2");
+}

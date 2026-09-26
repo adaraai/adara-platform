@@ -1,4 +1,4 @@
-"""Download real partner logos from official sites and verified vector sources."""
+"""Download partner logos used by PartnerLogoMarquee."""
 
 from __future__ import annotations
 
@@ -59,27 +59,6 @@ def save_jumia_white_logo() -> bool:
     return False
 
 
-def make_wave_white_logo() -> None:
-    path = DIR / "wave.png"
-    if not path.exists():
-        return
-    try:
-        from PIL import Image
-    except ImportError:
-        print("SKIP wave-white.png: Pillow not installed")
-        return
-
-    img = Image.open(path).convert("RGBA")
-    px = img.load()
-    for y in range(img.height):
-        for x in range(img.width):
-            _, _, _, alpha = px[x, y]
-            if alpha > 20:
-                px[x, y] = (255, 255, 255, alpha)
-    img.save(DIR / "wave-white.png")
-    print("OK   wave-white.png (white lockup for dark backgrounds)")
-
-
 def fix_safaricom() -> None:
     path = DIR / "safaricom.svg"
     if not path.exists():
@@ -94,14 +73,10 @@ def main() -> None:
     DIR.mkdir(parents=True, exist_ok=True)
 
     sources = [
-        # Official / primary sources
-        ("wave.png", "https://www.wave.com/img/nav-logo.png"),
         (
             "chipper.svg",
             "https://cdn.prod.website-files.com/63c81b0c3ad929013f062d70/63c81b0c3ad929a04e062dde_chipper-logo-white.svg",
         ),
-        ("mtn.svg", "https://upload.wikimedia.org/wikipedia/commons/a/af/MTN_Logo.svg"),
-        # Verified brand vectors (worldvectorlogo CDN)
         ("safaricom.svg", "https://cdn.worldvectorlogo.com/logos/safaricom.svg"),
         ("flutterwave.svg", "https://cdn.worldvectorlogo.com/logos/flutterwave-1.svg"),
         ("paystack.svg", "https://cdn.worldvectorlogo.com/logos/paystack-2.svg"),
@@ -112,11 +87,9 @@ def main() -> None:
     for name, url in sources:
         fetch(name, url)
 
-    # Prefer Jumia white wordmark from official site when available
     if save_jumia_white_logo():
-        pass  # overwrote worldvectorlogo version
+        pass
 
-    # Try Flutterwave press kit assets from page scripts
     for link in scrape_links(
         "https://flutterwave.com/ke/press-kit",
         r'https?://[^"\']+\.(?:svg|png)',
@@ -125,12 +98,10 @@ def main() -> None:
             if fetch("flutterwave.svg", link):
                 break
 
-    # Andela header logo from official site
     for link in scrape_links("https://www.andela.com", r'https?://[^"\']+andela[^"\']*\.(?:svg|png)'):
         if fetch("andela.svg", link):
             break
 
-    make_wave_white_logo()
     fix_safaricom()
 
 
