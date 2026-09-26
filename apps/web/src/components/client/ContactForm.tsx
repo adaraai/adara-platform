@@ -69,7 +69,7 @@ export function ContactForm() {
 
           <div className="space-y-2">
             <label htmlFor="email" className="text-base text-white">
-              Work email <span className="text-white/45">*</span>
+              Email <span className="text-white/45">*</span>
             </label>
             <input
               id="email"
