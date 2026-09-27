@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Github, Instagram, Linkedin, Twitter } from "lucide-react";
+import { Linkedin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/client/Logo";
 
@@ -29,10 +29,7 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Twitter, href: "https://twitter.com/adaraailab", label: "Twitter" },
   { icon: Linkedin, href: "https://linkedin.com/company/adara", label: "LinkedIn" },
-  { icon: Instagram, href: "https://instagram.com/adaraailab", label: "Instagram" },
-  { icon: Github, href: "https://github.com/adara", label: "GitHub" },
 ];
 
 function FooterColumn({
