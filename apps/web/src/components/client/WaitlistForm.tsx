@@ -5,15 +5,18 @@ type WaitlistFormProps = {
   source: string;
   submitLabel?: string;
   className?: string;
+  variant?: "default" | "light";
 };
 
 export function WaitlistForm({
   source,
   submitLabel = "Notify me",
   className,
+  variant = "default",
 }: WaitlistFormProps) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const light = variant === "light";
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -37,15 +40,28 @@ export function WaitlistForm({
 
   if (submitted) {
     return (
-      <div className={cn("rounded-2xl border border-border bg-muted/20 px-5 py-6 text-center", className)}>
-        <p className="text-sm font-medium text-foreground">You&apos;re on the list</p>
-        <p className="mt-1.5 text-sm text-muted-foreground">
+      <div
+        className={cn(
+          "rounded-2xl border px-5 py-6 text-center",
+          light ? "border-neutral-200 bg-neutral-50" : "border-border bg-muted/20",
+          className
+        )}
+      >
+        <p className={cn("text-sm font-medium", light ? "text-neutral-900" : "text-foreground")}>
+          You&apos;re on the list
+        </p>
+        <p className={cn("mt-1.5 text-sm", light ? "text-neutral-600" : "text-muted-foreground")}>
           We&apos;ll email you when this is ready. Nothing is live yet.
         </p>
         <button
           type="button"
           onClick={() => setSubmitted(false)}
-          className="mt-4 text-xs text-muted-foreground transition-colors hover:text-foreground"
+          className={cn(
+            "mt-4 text-xs transition-colors",
+            light
+              ? "text-neutral-500 hover:text-neutral-900"
+              : "text-muted-foreground hover:text-foreground"
+          )}
         >
           Add another email
         </button>
@@ -66,7 +82,12 @@ export function WaitlistForm({
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@company.com"
         autoComplete="email"
-        className="h-12 w-full rounded-full border border-border bg-background px-5 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-foreground/25 focus:outline-none focus:ring-0"
+        className={cn(
+          "h-12 w-full rounded-full border px-5 text-sm focus:outline-none",
+          light
+            ? "border-neutral-300 bg-white text-neutral-900 placeholder:text-neutral-400 transition-shadow focus:border-primary focus:ring-4 focus:ring-primary/15"
+            : "border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:border-foreground/25 focus:ring-0"
+        )}
       />
       <button
         type="submit"

@@ -1,8 +1,13 @@
+import { useCallback, useState } from "react";
 import { MintButton } from "@/components/client/MintButton";
 import { PartnerLogoMarquee } from "@/components/client/PartnerLogoMarquee";
 import { LazyVideo } from "@/components/client/LazyVideo";
+import { WaitlistModal } from "@/components/client/WaitlistModal";
 
 export function Hero() {
+  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
+  const closeWaitlist = useCallback(() => setIsWaitlistOpen(false), []);
+
   return (
     <section className="relative isolate overflow-hidden text-white">
       <div className="relative flex min-h-[min(100svh,34rem)] w-full flex-col sm:min-h-[32rem] lg:min-h-[34rem]">
@@ -50,11 +55,11 @@ export function Hero() {
                   Contact us
                 </MintButton>
                 <MintButton
-                  href="/#features"
                   size="lg"
+                  onClick={() => setIsWaitlistOpen(true)}
                   className="bg-transparent text-white ring-1 ring-white/30 hover:bg-white/10 hover:text-white active:bg-white/15"
                 >
-                  Explore platform
+                  Join waitlist
                 </MintButton>
               </div>
             </div>
@@ -64,6 +69,8 @@ export function Hero() {
           <PartnerLogoMarquee className="relative z-10 shrink-0 bg-transparent pt-1 pb-4 sm:py-5" />
         </div>
       </div>
+
+      <WaitlistModal open={isWaitlistOpen} onClose={closeWaitlist} source="hero" />
     </section>
   );
 }

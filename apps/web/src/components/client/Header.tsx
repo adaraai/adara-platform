@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/client/Logo";
 import { MintButton } from "@/components/client/MintButton";
 import { navigationItems } from "@/components/client/nav";
+import { WaitlistModal } from "@/components/client/WaitlistModal";
 
 type HeaderProps = {
   variant?: "default" | "home";
@@ -14,6 +15,8 @@ export function Header({ variant: _variant = "default" }: HeaderProps) {
   const { pathname } = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
+  const closeWaitlist = useCallback(() => setIsWaitlistOpen(false), []);
 
   useEffect(() => {
     setIsMenuOpen(false);
@@ -30,11 +33,11 @@ export function Header({ variant: _variant = "default" }: HeaderProps) {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+    document.body.style.overflow = isMenuOpen || isWaitlistOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isMenuOpen]);
+  }, [isMenuOpen, isWaitlistOpen]);
 
   // Same height as Contact button (h-9) so every header control shares one center line
   const navLink =
@@ -65,9 +68,9 @@ export function Header({ variant: _variant = "default" }: HeaderProps) {
           </div>
 
           <div className="hidden items-center gap-3 lg:flex">
-            <a href="/#features" className={navLink}>
-              Explore
-            </a>
+            <button type="button" onClick={() => setIsWaitlistOpen(true)} className={navLink}>
+              Join waitlist
+            </button>
             <MintButton href="/#contact" size="sm" className="leading-none">
               Contact us
             </MintButton>
@@ -108,14 +111,23 @@ export function Header({ variant: _variant = "default" }: HeaderProps) {
               {item.label}
             </Link>
           ))}
-          <a href="/#features" className={mobileNavLink} onClick={() => setIsMenuOpen(false)}>
-            Explore
-          </a>
+          <button
+            type="button"
+            className={mobileNavLink}
+            onClick={() => {
+              setIsMenuOpen(false);
+              setIsWaitlistOpen(true);
+            }}
+          >
+            Join waitlist
+          </button>
           <a href="/#contact" className={mobileNavLink} onClick={() => setIsMenuOpen(false)}>
             Contact us
           </a>
         </nav>
       </div>
+
+      <WaitlistModal open={isWaitlistOpen} onClose={closeWaitlist} source="header" />
     </header>
   );
 }
