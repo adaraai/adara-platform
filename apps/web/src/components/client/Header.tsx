@@ -6,6 +6,7 @@ import { Logo } from "@/components/client/Logo";
 import { MintButton } from "@/components/client/MintButton";
 import { navigationItems } from "@/components/client/nav";
 import { WaitlistModal } from "@/components/client/WaitlistModal";
+import { useScrollLock } from "@/lib/scrollLock";
 
 type HeaderProps = {
   variant?: "default" | "home";
@@ -32,12 +33,7 @@ export function Header({ variant: _variant = "default" }: HeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = isMenuOpen || isWaitlistOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isMenuOpen, isWaitlistOpen]);
+  useScrollLock(isMenuOpen);
 
   // Same height as Contact button (h-9) so every header control shares one center line
   const navLink =
@@ -111,19 +107,26 @@ export function Header({ variant: _variant = "default" }: HeaderProps) {
               {item.label}
             </Link>
           ))}
-          <button
-            type="button"
-            className={mobileNavLink}
-            onClick={() => {
-              setIsMenuOpen(false);
-              setIsWaitlistOpen(true);
-            }}
-          >
-            Join waitlist
-          </button>
-          <a href="/#contact" className={mobileNavLink} onClick={() => setIsMenuOpen(false)}>
-            Contact us
-          </a>
+          <div className="mt-6 flex flex-col gap-3 border-t border-neutral-200 pt-6">
+            <MintButton
+              href="/#contact"
+              size="lg"
+              className="w-full"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Contact us
+            </MintButton>
+            <MintButton
+              size="lg"
+              className="w-full bg-white text-neutral-900 ring-1 ring-neutral-300 hover:bg-neutral-50 hover:text-neutral-900 active:bg-neutral-100"
+              onClick={() => {
+                setIsMenuOpen(false);
+                setIsWaitlistOpen(true);
+              }}
+            >
+              Join waitlist
+            </MintButton>
+          </div>
         </nav>
       </div>
 

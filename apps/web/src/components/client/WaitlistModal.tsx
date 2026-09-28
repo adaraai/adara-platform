@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { WaitlistForm } from "@/components/client/WaitlistForm";
+import { useScrollLock } from "@/lib/scrollLock";
 
 type WaitlistModalProps = {
   open: boolean;
@@ -11,13 +12,12 @@ type WaitlistModalProps = {
 
 export function WaitlistModal({ open, onClose, source = "waitlist-modal" }: WaitlistModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  useScrollLock(open);
 
   useEffect(() => {
     if (!open) return;
 
     const previouslyFocused = document.activeElement as HTMLElement | null;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
 
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
@@ -31,7 +31,6 @@ export function WaitlistModal({ open, onClose, source = "waitlist-modal" }: Wait
     return () => {
       window.clearTimeout(focusTimer);
       window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
       previouslyFocused?.focus?.();
     };
   }, [open, onClose]);
@@ -41,7 +40,7 @@ export function WaitlistModal({ open, onClose, source = "waitlist-modal" }: Wait
   return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
       <div
-        className="absolute inset-0 bg-neutral-950/60 backdrop-blur-sm animate-in fade-in duration-200"
+        className="absolute inset-0 touch-none bg-neutral-950/60 backdrop-blur-sm animate-in fade-in duration-200"
         onClick={onClose}
         aria-hidden
       />
@@ -52,7 +51,7 @@ export function WaitlistModal({ open, onClose, source = "waitlist-modal" }: Wait
         aria-modal="true"
         aria-labelledby="waitlist-modal-title"
         aria-describedby="waitlist-modal-description"
-        className="relative max-h-[calc(100dvh-2rem)] w-full max-w-[26rem] overflow-y-auto overscroll-contain rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-200 sm:max-w-md sm:rounded-3xl"
+        className="relative max-h-[calc(100dvh-2rem)] w-full max-w-[26rem] touch-pan-y overflow-y-auto overflow-x-hidden overscroll-contain rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-200 sm:max-w-md sm:rounded-3xl"
       >
 
         <div
