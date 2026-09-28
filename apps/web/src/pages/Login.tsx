@@ -7,8 +7,11 @@ import {
   authSoonFieldClassName,
 } from "@/components/client/AuthShell";
 import { WaitlistForm } from "@/components/client/WaitlistForm";
+import { useSeo } from "@/lib/seo";
 
 export default function Login() {
+  useSeo({ title: "Log in", noindex: true });
+
   const [hint, setHint] = useState<string | null>(null);
 
   function showSoon(feature: string) {

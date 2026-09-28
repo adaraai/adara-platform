@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { Header } from "@/components/client/Header";
 import { Footer } from "@/components/client/Footer";
+import { useSeo } from "@/lib/seo";
 
 export default function NotFound() {
+  useSeo({ title: "Page not found", noindex: true });
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />

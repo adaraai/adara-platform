@@ -10,8 +10,11 @@ import { LatestNewsSection } from "@/components/client/LatestNewsSection";
 import { ContactForm } from "@/components/client/ContactForm";
 import { TeaserSection } from "@/components/client/TeaserSection";
 import { Footer } from "@/components/client/Footer";
+import { useSeo } from "@/lib/seo";
 
 const Index = () => {
+  useSeo({ path: "/" });
+
   useEffect(() => {
     const root = document.documentElement;
     const wasDark = root.classList.contains("dark");

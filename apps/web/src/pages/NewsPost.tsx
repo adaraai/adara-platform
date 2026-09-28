@@ -6,6 +6,7 @@ import { Footer } from "@/components/client/Footer";
 import { NewsCard } from "@/components/client/NewsCard";
 import { getNewsPost, getRelatedNews } from "@/data/news";
 import { cn } from "@/lib/utils";
+import { DEFAULT_IMAGE, SITE_NAME, SITE_URL, useSeo } from "@/lib/seo";
 
 export default function NewsPost() {
   const { slug } = useParams<{ slug: string }>();
@@ -22,14 +23,27 @@ export default function NewsPost() {
     };
   }, [slug]);
 
-  useEffect(() => {
-    document.title = post
-      ? `${post.title} | Adara`
-      : "News | Adara";
-    return () => {
-      document.title = "Adara, Data and tools that make AI understand Africa";
-    };
-  }, [post]);
+  useSeo(
+    post
+      ? {
+          title: post.title,
+          description: post.excerpt,
+          path: `/news/${post.slug}`,
+          type: "article",
+          jsonLd: {
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            headline: post.title,
+            description: post.excerpt,
+            datePublished: post.isoDate,
+            url: `${SITE_URL}/news/${post.slug}`,
+            image: DEFAULT_IMAGE,
+            author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+            publisher: { "@id": `${SITE_URL}/#organization` },
+          },
+        }
+      : { title: "Story not found", noindex: true },
+  );
 
   if (!post) {
     return (

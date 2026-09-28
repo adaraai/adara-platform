@@ -4,18 +4,24 @@ import { Footer } from "@/components/client/Footer";
 import { NewsCard } from "@/components/client/NewsCard";
 import { NEWS_LABELS, NEWS_POSTS } from "@/data/news";
 import { cn } from "@/lib/utils";
+import { useSeo } from "@/lib/seo";
 
 export default function News() {
   const [label, setLabel] = useState("All");
 
+  useSeo({
+    title: "News",
+    description:
+      "News and research updates from Adara AI Lab on African language AI: speech-to-text, text-to-speech, datasets, benchmarks and the Adara API.",
+    path: "/news",
+  });
+
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "News | Adara";
     const root = document.documentElement;
     const wasDark = root.classList.contains("dark");
     root.classList.remove("dark");
     return () => {
-      document.title = "Adara, Data and tools that make AI understand Africa";
       if (wasDark) root.classList.add("dark");
     };
   }, []);

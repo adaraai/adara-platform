@@ -12,6 +12,7 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
+import { useSeo } from "@/lib/seo";
 
 // ─── Page shell ────────────────────────────────────────────────────────────
 
@@ -28,6 +29,11 @@ export function DocPage({
   prev?: { label: string; to: string };
   next?: { label: string; to: string };
 }) {
+  useSeo({
+    title: `${title} | Docs`,
+    description: description ?? `${title}: Adara API documentation for African speech, language and context.`,
+  });
+
   return (
     <article className="mx-auto max-w-4xl px-7 py-12 lg:px-12">
       {/* Header */}

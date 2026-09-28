@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { useEffect } from "react";
 import { Header } from "@/components/client/Header";
+import { useSeo } from "@/lib/seo";
 import { Footer } from "@/components/client/Footer";
 
 function LegalPage({
@@ -10,12 +10,7 @@ function LegalPage({
   title: string;
   children: ReactNode;
 }) {
-  useEffect(() => {
-    document.title = `${title} | Adara`;
-    return () => {
-      document.title = "Adara, Data and tools that make AI understand Africa";
-    };
-  }, [title]);
+  useSeo({ title, description: `${title} for Adara AI Lab and the Adara API.` });
 
   return (
     <div className="min-h-screen bg-background">

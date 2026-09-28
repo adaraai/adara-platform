@@ -8,8 +8,11 @@ import {
   authTextareaClassName,
 } from "@/components/client/AuthShell";
 import { WaitlistForm } from "@/components/client/WaitlistForm";
+import { useSeo } from "@/lib/seo";
 
 export default function Signup() {
+  useSeo({ title: "Sign up", noindex: true });
+
   const [hint, setHint] = useState<string | null>(null);
 
   function showSoon(feature: string) {
