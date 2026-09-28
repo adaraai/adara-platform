@@ -45,8 +45,8 @@ export function Privacy() {
       </p>
       <p>
         Questions:{" "}
-        <a href="mailto:info@adara.ai" className="underline underline-offset-4 hover:text-foreground">
-          info@adara.ai
+        <a href="mailto:infoadaraai@gmail.com" className="underline underline-offset-4 hover:text-foreground">
+          infoadaraai@gmail.com
         </a>
         .
       </p>
@@ -63,8 +63,8 @@ export function Terms() {
       </p>
       <p>
         Questions:{" "}
-        <a href="mailto:info@adara.ai" className="underline underline-offset-4 hover:text-foreground">
-          info@adara.ai
+        <a href="mailto:infoadaraai@gmail.com" className="underline underline-offset-4 hover:text-foreground">
+          infoadaraai@gmail.com
         </a>
         .
       </p>

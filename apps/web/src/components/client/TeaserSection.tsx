@@ -40,14 +40,18 @@ export function TeaserSection() {
         <p className="mt-5 max-w-lg text-base font-light leading-[1.5] text-white/70 sm:text-lg">
           Start with the Africa Context API, or talk to us about your product and market.
         </p>
-        <div className="mt-8 flex w-full max-w-md flex-col items-stretch gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
-          <MintButton href="/#contact" size="lg" className="w-full rounded-xl sm:w-auto">
+        <div className="mt-8 flex w-full max-w-md flex-row items-stretch gap-3 sm:max-w-none sm:flex-wrap sm:items-center sm:justify-center">
+          <MintButton
+            href="/#contact"
+            size="lg"
+            className="h-11 min-w-0 flex-[1.45] whitespace-nowrap rounded-xl px-2 text-[clamp(10.5px,3.2vw,13px)] sm:h-12 sm:flex-none sm:px-7 sm:text-[15px]"
+          >
             Schedule a discovery session
           </MintButton>
           <MintButton
             href="/#contact"
             size="lg"
-            className="w-full rounded-xl bg-transparent text-white ring-1 ring-white/30 hover:bg-white/10 hover:text-white active:bg-white/15 sm:w-auto"
+            className="h-11 min-w-0 flex-1 whitespace-nowrap rounded-xl bg-transparent px-2 text-[clamp(10.5px,3.2vw,13px)] text-white ring-1 ring-white/30 hover:bg-white/10 hover:text-white active:bg-white/15 sm:h-12 sm:flex-none sm:px-7 sm:text-[15px]"
           >
             Talk to an expert
           </MintButton>

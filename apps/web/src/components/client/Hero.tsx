@@ -5,7 +5,7 @@ import { LazyVideo } from "@/components/client/LazyVideo";
 export function Hero() {
   return (
     <section className="relative isolate overflow-hidden text-white">
-      <div className="relative flex min-h-[min(100svh,40rem)] w-full flex-col sm:min-h-[32rem] lg:min-h-[34rem]">
+      <div className="relative flex min-h-[min(100svh,34rem)] w-full flex-col sm:min-h-[32rem] lg:min-h-[34rem]">
         <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-black" aria-hidden>
           <div className="absolute inset-0">
             <LazyVideo
@@ -30,14 +30,16 @@ export function Hero() {
         </div>
 
         <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 pt-[calc(4.25rem+env(safe-area-inset-top))] sm:px-6 lg:px-8">
-          <div className="flex flex-1 flex-col items-center justify-center py-8 text-center sm:py-10">
+          <div className="flex flex-1 flex-col items-center justify-center pt-2 pb-8 text-center sm:py-10">
             <div className="relative w-full max-w-xl sm:max-w-2xl">
               <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-adara-orange-light">
                 Adara AI Lab
               </p>
-              <h1 className="mt-3 text-[clamp(1.75rem,7vw,3.25rem)] font-bold leading-[1.15] tracking-[-0.02em] text-white sm:mt-4 sm:leading-[1.2]">
-                Data and tools that make AI{" "}
-                <br className="hidden sm:block" />
+              <h1 className="mt-3 text-[clamp(2rem,8.5vw,2.75rem)] font-bold leading-[1.12] tracking-[-0.02em] text-white sm:mt-4 sm:text-[clamp(1.75rem,7vw,3.25rem)] sm:leading-[1.2]">
+                Data and tools{" "}
+                <br className="sm:hidden" />
+                that make AI{" "}
+                <br />
                 understand Africa.
               </h1>
               <p className="mx-auto mt-3 max-w-lg text-base font-light leading-[1.45] text-white/80 sm:mt-4 sm:text-lg">
@@ -59,7 +61,7 @@ export function Hero() {
           </div>
 
           {/* Logos sit on the video — in flow so they never collide with CTAs */}
-          <PartnerLogoMarquee className="relative z-10 shrink-0 bg-transparent py-4 sm:py-5" />
+          <PartnerLogoMarquee className="relative z-10 shrink-0 bg-transparent pt-1 pb-4 sm:py-5" />
         </div>
       </div>
     </section>

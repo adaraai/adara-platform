@@ -25,7 +25,7 @@ export function ContactForm() {
     const body = encodeURIComponent(
       `Name: ${formData.firstName} ${formData.lastName}\nEmail: ${formData.email}\nCompany: ${formData.company || ", "}\n\n${formData.message}`,
     );
-    window.location.href = `mailto:info@adara.ai?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:infoadaraai@gmail.com?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -113,7 +113,7 @@ export function ContactForm() {
 
           <button
             type="submit"
-            className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-adara-orange-hover sm:w-auto"
+            className="inline-flex h-10 w-auto items-center justify-center rounded-full bg-primary px-6 text-[13px] sm:h-12 sm:px-8 sm:text-sm font-medium text-primary-foreground transition-colors hover:bg-adara-orange-hover sm:w-auto"
           >
             Open email
           </button>

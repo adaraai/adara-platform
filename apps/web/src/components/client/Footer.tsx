@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Linkedin } from "lucide-react";
+import { Instagram, Linkedin, Youtube } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/client/Logo";
 
@@ -28,8 +28,19 @@ const footerLinks = {
   ],
 };
 
+function XIcon({ className }: { className?: string; strokeWidth?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden className={cn(className, "scale-[0.85]")}>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
 const socialLinks = [
-  { icon: Linkedin, href: "https://linkedin.com/company/adara", label: "LinkedIn" },
+  { icon: Linkedin, href: "https://www.linkedin.com/company/adara-ai-lab", label: "LinkedIn" },
+  { icon: Instagram, href: "https://www.instagram.com/adara.africa", label: "Instagram" },
+  { icon: XIcon, href: "https://x.com/adaraaii", label: "X" },
+  { icon: Youtube, href: "https://www.youtube.com/@adaraaii", label: "YouTube" },
 ];
 
 function FooterColumn({
@@ -100,13 +111,13 @@ export function Footer({ variant = "dark" }: FooterProps) {
               Teaching AI to understand Africa in its languages, its logic, and its lived reality.
             </p>
             <a
-              href="mailto:info@adara.ai"
+              href="mailto:infoadaraai@gmail.com"
               className={cn(
                 "mt-6 inline-block text-[14px] font-medium transition-colors hover:text-primary",
                 light ? "text-neutral-900" : "text-white",
               )}
             >
-              info@adara.ai
+              infoadaraai@gmail.com
             </a>
             <p
               className={cn(
