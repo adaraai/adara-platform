@@ -152,7 +152,11 @@ Adara AI Lab · Accra · Lagos · Nairobi`;
 
 type Env = Record<string, string | undefined>;
 
-export async function POST(request: Request, env: Env = process.env): Promise<Response> {
+export function POST(request: Request): Promise<Response> {
+  return sendWaitlistConfirmation(request, process.env);
+}
+
+export async function sendWaitlistConfirmation(request: Request, env: Env): Promise<Response> {
   const apiKey = env.RESEND_API_KEY;
   if (!apiKey) return json(503, { ok: false, error: "RESEND_API_KEY is not set" });
 

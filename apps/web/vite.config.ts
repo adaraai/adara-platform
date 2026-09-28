@@ -21,7 +21,7 @@ function localApiFunctions(): Plugin {
           const env = loadEnv(server.config.mode, server.config.envDir || server.config.root, "");
           const response: Response =
             req.method === "POST"
-              ? await mod.POST(request, env)
+              ? await mod.sendWaitlistConfirmation(request, env)
               : new Response(null, { status: 405, headers: { Allow: "POST" } });
 
           res.statusCode = response.status;
