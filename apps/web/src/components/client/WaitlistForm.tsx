@@ -85,7 +85,7 @@ export function WaitlistForm({
         className={cn(
           "h-12 w-full rounded-full border px-5 text-sm focus:outline-none",
           light
-            ? "border-neutral-300 bg-white text-neutral-900 placeholder:text-neutral-400 transition-shadow focus:border-primary focus:ring-4 focus:ring-primary/15"
+            ? "border-neutral-300 bg-white text-base text-neutral-900 sm:text-sm placeholder:text-neutral-400 transition-shadow focus:border-primary focus:ring-4 focus:ring-primary/15"
             : "border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:border-foreground/25 focus:ring-0"
         )}
       />
