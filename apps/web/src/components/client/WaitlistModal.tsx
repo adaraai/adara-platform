@@ -62,7 +62,7 @@ export function WaitlistModal({ open, onClose, source = "waitlist-modal" }: Wait
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
+          className="absolute right-4 top-4 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
           aria-label="Close"
         >
           <X className="h-4 w-4" strokeWidth={2} />
