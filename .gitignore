@@ -46,6 +46,7 @@ Thumbs.db
 .vscode/
 
 # Infra
+.vercel/
 .terraform/
 *.tfstate
 *.tfstate.*
@@ -54,3 +55,5 @@ tfplan
 nx-cache/
 .nx/
 
+.vercel
+.env*
