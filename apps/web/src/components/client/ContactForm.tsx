@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { isWeb3FormsConfigured, submitToWeb3Forms } from "@/lib/web3forms";
 
 const inputClassName =
   "h-12 w-full rounded-full border border-white/15 bg-white/[0.04] px-5 text-base text-white placeholder:text-white/35 focus:border-white/30 focus:outline-none focus:ring-0";
@@ -6,26 +7,59 @@ const inputClassName =
 const textareaClassName =
   "min-h-[140px] w-full resize-y rounded-3xl border border-white/15 bg-white/[0.04] px-5 py-3.5 text-base text-white placeholder:text-white/35 focus:border-white/30 focus:outline-none focus:ring-0";
 
+const emptyForm = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  company: "",
+  message: "",
+};
+
+type Status = "idle" | "sending" | "sent" | "error";
+
 export function ContactForm() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    company: "",
-    message: "",
-  });
+  const [formData, setFormData] = useState(emptyForm);
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const subject = encodeURIComponent("Adara inquiry");
-    const body = encodeURIComponent(
-      `Name: ${formData.firstName} ${formData.lastName}\nEmail: ${formData.email}\nCompany: ${formData.company || ", "}\n\n${formData.message}`,
-    );
-    window.location.href = `mailto:infoadaraai@gmail.com?subject=${subject}&body=${body}`;
+    if (status === "sending") return;
+
+    if (!isWeb3FormsConfigured) {
+      setStatus("error");
+      setErrorMessage("The contact form isn't configured yet. Please email infoadaraai@gmail.com.");
+      return;
+    }
+
+    const honeypot = new FormData(e.currentTarget).get("botcheck");
+    if (honeypot) return;
+
+    setStatus("sending");
+    setErrorMessage("");
+
+    try {
+      await submitToWeb3Forms({
+        subject: `New inquiry from ${formData.firstName} ${formData.lastName}`,
+        from_name: "Adara website",
+        replyto: formData.email,
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        company: formData.company || "-",
+        message: formData.message,
+        form: "Contact",
+      });
+
+      setStatus("sent");
+      setFormData(emptyForm);
+    } catch {
+      setStatus("error");
+      setErrorMessage("Something went wrong sending your message. Please try again.");
+    }
   };
 
   return (
@@ -35,7 +69,30 @@ export function ContactForm() {
           Contact us
         </h2>
 
+        {status === "sent" ? (
+          <div className="mt-8 max-w-2xl rounded-3xl border border-white/15 bg-white/[0.04] px-6 py-8 sm:mt-10 sm:px-8">
+            <p className="text-lg font-semibold text-white">Thanks, your message is on its way.</p>
+            <p className="mt-2 text-base text-white/70">
+              We&apos;ll get back to you at the email you provided, usually within one to two business days.
+            </p>
+            <button
+              type="button"
+              onClick={() => setStatus("idle")}
+              className="mt-5 text-sm text-white/60 underline-offset-4 transition-colors hover:text-white hover:underline"
+            >
+              Send another message
+            </button>
+          </div>
+        ) : (
         <form onSubmit={handleSubmit} className="mt-8 max-w-2xl space-y-5 sm:mt-10">
+          <input
+            type="checkbox"
+            name="botcheck"
+            tabIndex={-1}
+            autoComplete="off"
+            className="hidden"
+            aria-hidden
+          />
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
               <label htmlFor="firstName" className="text-base text-white">
@@ -111,13 +168,21 @@ export function ContactForm() {
             />
           </div>
 
+          {status === "error" && (
+            <p role="alert" className="text-sm text-red-400">
+              {errorMessage}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="inline-flex h-10 w-auto items-center justify-center rounded-full bg-primary px-6 text-[13px] sm:h-12 sm:px-8 sm:text-sm font-medium text-primary-foreground transition-colors hover:bg-adara-orange-hover sm:w-auto"
+            disabled={status === "sending"}
+            className="inline-flex h-10 w-auto items-center justify-center rounded-full bg-primary px-6 text-[13px] sm:h-12 sm:px-8 sm:text-sm font-medium text-primary-foreground transition-colors hover:bg-adara-orange-hover disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
           >
-            Open email
+            {status === "sending" ? "Sending..." : "Send message"}
           </button>
         </form>
+        )}
       </div>
     </section>
   );

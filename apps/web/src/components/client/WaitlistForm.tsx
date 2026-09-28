@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { cn } from "@/lib/utils";
+import { isWeb3FormsConfigured, submitToWeb3Forms } from "@/lib/web3forms";
 
 type WaitlistFormProps = {
   source: string;
@@ -16,26 +17,38 @@ export function WaitlistForm({
 }: WaitlistFormProps) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
   const light = variant === "light";
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const value = email.trim().toLowerCase();
-    if (!value) return;
+    if (!value || sending) return;
 
-    try {
-      const key = "adara-waitlist";
-      const existing = JSON.parse(localStorage.getItem(key) || "[]") as unknown[];
-      localStorage.setItem(
-        key,
-        JSON.stringify([...existing, { email: value, source, at: Date.now() }])
-      );
-    } catch {
-      /* ignore quota / private mode */
+    if (!isWeb3FormsConfigured) {
+      setError("The waitlist isn't configured yet. Please email infoadaraai@gmail.com.");
+      return;
     }
 
-    setSubmitted(true);
-    setEmail("");
+    setSending(true);
+    setError("");
+    try {
+      await submitToWeb3Forms({
+        subject: `New waitlist signup: ${value}`,
+        from_name: "Adara website",
+        replyto: value,
+        email: value,
+        source,
+        form: "Waitlist",
+      });
+      setSubmitted(true);
+      setEmail("");
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSending(false);
+    }
   }
 
   if (submitted) {
@@ -89,11 +102,17 @@ export function WaitlistForm({
             : "border-border bg-background text-foreground placeholder:text-muted-foreground/60 focus:border-foreground/25 focus:ring-0"
         )}
       />
+      {error && (
+        <p role="alert" className={cn("px-2 text-sm", light ? "text-red-600" : "text-red-400")}>
+          {error}
+        </p>
+      )}
       <button
         type="submit"
-        className="h-12 w-full rounded-full bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-adara-orange-hover"
+        disabled={sending}
+        className="h-12 w-full rounded-full bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-adara-orange-hover disabled:cursor-not-allowed disabled:opacity-70"
       >
-        {submitLabel}
+        {sending ? "Joining..." : submitLabel}
       </button>
     </form>
   );
