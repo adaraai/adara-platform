@@ -42,6 +42,11 @@ export function WaitlistForm({
         source,
         form: "Waitlist",
       });
+      void fetch("/api/waitlist-confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: value }),
+      }).catch(() => {});
       setSubmitted(true);
       setEmail("");
     } catch {
